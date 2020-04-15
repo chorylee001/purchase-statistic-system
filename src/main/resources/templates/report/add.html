@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body class="hold-transition skin-blue sidebar-mini">
+<section class="content-header">
+
+    <h1>
+        数据管理
+        <small>数据上报</small>
+        <button type="submit" class="btn btn-primary upload-audio top-button" data-toggle="modal"
+                data-target="#upload-modal">日报
+        </button>
+    </h1>
+</section>
+<!-- Main content -->
+<section class="content">
+    <div class="box box-primary">
+        <form class="form-horizontal main-from" id="mainForm" action="/report/o_save" method="post">
+            <div class="box-header with-border">
+                <h3 class="box-title">代买</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <div class="row form-group">
+                    <div class="col-md-2">
+                        <label>订单</label>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="col-sm-4 control-label">代买商品类别<label class="warn-star">*</label></label>
+                        <div class="col-sm-8">
+                            <select class="form-control select2 parent_category col-sm-8">
+                                <option value="=-1">请选择1</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-control select2 child_category">
+                            <option selected="selected">请选择2</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="col-sm-4 control-label">代买总金额<label class="warn-star">*</label></label>
+                        <div class="col-sm-8">
+                            <input type="text" name="documentDesc" class="form-control" placeholder="请输入上报日期" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <button type="button" class="btn btn-success agent-add"><i class="fa fa-plus"></i> 增加</button>
+                </div>
+            </div>
+
+
+            <div class="box-header with-border">
+                <h3 class="box-title">销售</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+                <div class="row form-group">
+                    <div class="col-md-2">
+                        <label>订单</label>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="col-sm-4 control-label">销售商品类别<label class="warn-star">*</label></label>
+                        <div class="col-sm-8">
+                            <select class="form-control select2 parent_category col-sm-8" id="parent_category">
+                                <option value="=-1">请选择1</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <select class="form-control select2 child_category" id="child_category">
+                            <option selected="selected">请选择2</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="col-sm-4 control-label">销售总金额<label class="warn-star">*</label></label>
+                        <div class="col-sm-8">
+                            <input type="text" name="documentDesc" class="form-control" placeholder="请输入上报日期" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <button type="button" class="btn btn-success sell-add"><i class="fa fa-plus"></i> 增加</button>
+                </div>
+            </div>
+
+            <div class="box-body">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">上报日期<label class="warn-star">*</label></label>
+                    <div class="col-sm-8">
+                        <input type="text" name="documentDesc" class="form-control" placeholder="请输入上报日期" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">填报人<label class="warn-star">*</label></label>
+                    <div class="col-sm-8">
+                        <input type="text" name="documentDesc" class="form-control" placeholder="请添加小于20个汉字的填报人名称" required>
+                    </div>
+                </div>
+            </div>
+            <div class="box-footer box-adjacent">
+                <input type="button" class="btn btn-default roolback" value="返&nbsp;&nbsp;&nbsp;&nbsp;回"></input>
+                <input type="button" class="btn btn-primary submit btn-adjacent" value="提&nbsp;&nbsp;&nbsp;&nbsp;交"></input>
+            </div>
+        </form>
+    </div>
+</section>
+<script th:inline="javascript">
+    $(function () {
+
+        /**
+         * 增加按钮添加元素
+         */
+        $('.agent-add,.sell-add').on('click',function (e) {
+            $(this).parent().before($(this).parent().prev().clone())
+        })
+
+        $('.select-control').select2();
+
+        //初始化参数
+        var parentCategory = ['农产品','工业消费品','生产资料'];
+        var childCategory =[
+            ['1粮油类','2生鲜食品类','3干货类'],
+            ['1休闲食品类','2烟酒类','3服装、鞋帽、针纺织品类','4化妆品类','5金银珠宝类','6日用品类','7家用电器和音像器材类','8中西药品类','9文化办公用品类','10家具类','11通讯器材类','12建筑及装潢材料类'],
+            ['1农用生产资料类','2化工产品类','3机电类','4木材类']
+        ];
+        for (var i = 0; i <parentCategory.length; i++) {
+            $(".parent_category").append("<option value=p"+i+">"+parentCategory[i]+"</option>");
+        }
+        var pIndex=0;
+        $(".parent_category").change(function(){
+            //第一个不移除
+            $(".child_category").children().not(":first").remove();
+            //select province value=>index
+            pIndex=$(this).children("option:selected").index();
+            //city index from 0;
+            var city =childCategory[pIndex-1];
+            //循环
+            for (var i = 0; i < city.length; i++) {
+                $("#child_category").append("<option value=c"+i+">"+city[i]+"</option>");
+            }
+        });
+
+
+        $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
+            checkboxClass: 'icheckbox_minimal-blue',
+            radioClass: 'iradio_minimal-blue'
+        })
+        $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
+            checkboxClass: 'icheckbox_minimal-red',
+            radioClass: 'iradio_minimal-red'
+        })
+        $(".upload-audio").on('click', function (e) {
+
+        })
+        $("#audio_file").on("click", function () {
+
+            $(".header-tr").siblings("tr").remove();
+            $(this).value = '';
+            $(".fileupload-group .path-label").html("请上传wav格式文件.");
+        })
+        /**
+         * 文件选中后触发
+         */
+        $("#audio_file").on('change', function (e) {
+
+            for (var i = 0; i < this.files.length; i++) {
+                if (!checkWAVFile(this.files[i])) {
+                    $(".header-tr").siblings("tr").remove();
+                    return;
+                }
+                if (i == 0) {
+                    $(".process-body").css("display", "block");
+                }
+                var line_process = "<tr>" +
+                    "<td>" + this.files[i].name + "</td>" +
+                    "<td class='server-path'></td>" +
+                    "<td></td>" +
+                    "</tr>";
+                $(".process-body table").append(line_process);
+            }
+            $(".fileupload-group .path-label").html(document.getElementById("audio_file").files.length + "个文件");
+        })
+        /**
+         * 文件上传
+         */
+        /**
+         * 单个文件上传
+         */
+        $(".btn-upload").click(function (e) {
+
+            setModalStyle(callback_upload())
+
+        });
+
+        /**
+         * 清空模态框
+         */
+        $('#upload-modal').on('hide.bs.modal', function () {
+
+            $(".process-body").css("display", "none");
+            $(".header-tr").siblings("tr").remove();
+            //清空文件
+            document.getElementById("audio_file").value = '';
+            $("#upload-modal .modal-dialog").removeClass("modal-lg");
+        })
+
+        /**
+         * 追加文件按钮
+         */
+        $(".append-button").on('click', function (e) {
+            $("#audio_file").click();
+        })
+        /**
+         *  模态框文件提交
+         */
+        $("#upload-modal submit").click(function (e) {
+            var formData = new FormData();
+            var file = document.getElementById("audio_file");
+
+            each; //--------
+
+            formData.append("file", file.files[0]);
+            fileUpload(uploadSuccess);
+            $.ajax({
+                data: formData,
+                contentType: false,
+                processData: false//避免参数序列化
+            })
+        })
+        validateForm();
+        /**
+         * 保存
+         */
+        $("#mainForm .submit").on('click',function (e) {
+
+            LoadAjaxFileForm(document.getElementById("mainForm"));
+            /*$('#mainForm').bootstrapValidator('validate');
+            if(!$('#mainForm').data('bootstrapValidator').isValid()){
+                return;
+            }
+            if ($('input').hasClass('error') || $(this).hasClass('error')) {
+                return;
+            } else {
+                $(".roolback").attr('disabled',true);
+                $(this).attr('disabled',true);
+                $("input[name='companyId']").val($("#sel_company").find("option:selected").val());
+                LoadAjaxFileForm(document.getElementById("mainForm"));
+            }*/
+        });
+
+        /**
+         * 返回
+         */
+        $("#mainForm .roolback").on('click',function (e) {
+
+            LoadAjaxContent("/report/index");
+        });
+    })
+    function setModalStyle(callback){
+
+        //set waitting
+        $(".process-body table").find('tr').each(function () {
+            $(this).find("td:last-child").html("<span class='badge bg-gray'><i class='fa fa-refresh fa-spin'></i></span>");
+        });
+
+        $("#upload-modal .modal-dialog").addClass("modal-lg");
+        callback();
+    }
+    function callback_upload(){
+        var files = document.getElementById("audio_file").files;
+        var dataBody = $(".process-body table");
+        var responseData, serverPath;
+        var url = "file/singleUpload";
+        for (var i = 0; i < files.length; i++) {
+
+            responseData = singleUpload("audio_file", files[i], url);
+            if (responseData.status == 1) {
+                for (key in responseData.data) {
+                    serverPath = responseData.data[key];
+                    dataBody.find('tr').each(function (e) {
+                        if ($(this).find("td:first-child").text() == key) {
+                            $(this).find("td.server-path").html(serverPath);
+                            $(this).find("td:last-child").html("<span class='badge bg-green'><i class='fa fa-check'></i></span>");
+                        }
+                    })
+                }
+            } else {
+                bootAlert("上传失败,请重试.")
+            }
+        }
+    }
+    function validateForm(){
+        $('#mainForm').bootstrapValidator({
+            message: '您输入的字符无效',
+            feedbackIcons: {
+                valid: 'glyphicon glyphicon-ok',
+                invalid: 'glyphicon glyphicon-remove',
+                validating: 'glyphicon glyphicon-refresh'
+            },
+            fields: {
+                documentDesc: {
+                    message: '话术名称无效.',
+                    validators: {
+                        notEmpty: {
+                            message: '请输入话术名称.'
+                        },
+                        stringLength: {
+                            min: 2,
+                            max: 30,
+                            message: '话术名称最少2个汉字，最多30个汉字.'
+                        }
+                        /*regexp: {
+                            regexp: /^[a-zA-Z0-9_\.]+$/,
+                            message: '话术名称只能由字母、数字、点和下划线组成'
+                        },*/
+                    }
+                },
+                template: {
+                    validators: {
+                        notEmpty: {
+                            message: '请选择话术文件.'
+                        }
+                    }
+                }
+            }
+        });
+        // $("#mainForm")
+    }
+    uploadSuccess = function () {
+
+    }
+</script>
+</body>
+</html>
