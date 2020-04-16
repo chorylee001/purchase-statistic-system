@@ -106,20 +106,11 @@ public class ReportController {
         String result = xmlMapper.writeValueAsString(stationReportXML);
         System.out.println("序列化结果：" + result);
 
-//        aliClient.processGETRequet("aaa","aaa","aaa","aaa","aaa","aa");
-        /*Response response = reportApi.sendData(dataXML);
-        Response.Body responseBody = response.body();
-        log.info("TTS respose body:{}",responseBody.toString());
-
-        if(response.status() != 200 || responseBody == null){
-            return null;
-        }*/
-
-        try {
+        /*try {
             dataSend(result);
         } catch (RemoteException e) {
             e.printStackTrace();
-        }
+        }*/
         return null;
     }
 
