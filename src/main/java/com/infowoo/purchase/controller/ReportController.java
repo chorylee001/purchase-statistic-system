@@ -6,19 +6,22 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.infowoo.purchase.api.DataReportApi;
+import com.infowoo.purchase.config.SyncServiceStationOperationRequest;
+import com.infowoo.purchase.config.SyncServiceStationOperationResponse;
+import com.infowoo.purchase.config.SyncServiceStationPortType;
+import com.infowoo.purchase.config.SyncServiceStationPortTypeProxy;
 import com.infowoo.purchase.entity.VoiceRecordIntent;
 import com.infowoo.purchase.model.JsonResult;
 import com.infowoo.purchase.service.IReportService;
 import com.infowoo.purchase.utils.DateUtil;
 import com.infowoo.purchase.vo.*;
-import feign.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.rmi.RemoteException;
 import java.util.*;
 
 @Slf4j
@@ -28,9 +31,6 @@ public class ReportController {
 
     @Autowired
     private IReportService reportService;
-
-    @Autowired
-    private DataReportApi reportApi;
 
     @RequestMapping(value = "/index")
     public String index(Model model){
@@ -58,8 +58,6 @@ public class ReportController {
     JsonResult save() throws JsonProcessingException {
 
         //构造xml格式数据并发送
-
-        List<ReportDataStationReportXML> stationReportXMLS = new ArrayList<>();
 
         List<ReportDataStationDataXML> reportDataStationDataXMLS = new ArrayList<>();
 
@@ -92,17 +90,10 @@ public class ReportController {
 
         ReportDataStationReportXML stationReportXML = ReportDataStationReportXML
                 .builder()
+                .userId("202004161600")
                 .rptDate(DateUtil.getFormat().format(new Date()))
                 .serviceStationReport(reportDataStationDataXMLS)
                 .build();
-
-        stationReportXMLS.add(stationReportXML);
-
-        ReportDataXML dataXML = ReportDataXML
-                .builder()
-                .serviceStation(stationReportXMLS)
-                .build();
-        dataXML.setServiceStation(stationReportXMLS);
 
         XmlMapper xmlMapper = new XmlMapper();
         xmlMapper.setDefaultUseWrapper(false);
@@ -112,17 +103,36 @@ public class ReportController {
         xmlMapper.setPropertyNamingStrategy(PropertyNamingStrategy.UPPER_CAMEL_CASE);
         //设置转换模式 
         xmlMapper.enable(MapperFeature.USE_STD_BEAN_NAMING);
-        String result = xmlMapper.writeValueAsString(dataXML);
+        String result = xmlMapper.writeValueAsString(stationReportXML);
         System.out.println("序列化结果：" + result);
 
-        Response response = reportApi.sendData(dataXML);
+//        aliClient.processGETRequet("aaa","aaa","aaa","aaa","aaa","aa");
+        /*Response response = reportApi.sendData(dataXML);
         Response.Body responseBody = response.body();
         log.info("TTS respose body:{}",responseBody.toString());
 
         if(response.status() != 200 || responseBody == null){
             return null;
+        }*/
+
+        try {
+            dataSend(result);
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
         return null;
+    }
+
+    private String dataSend(String xmlBody) throws RemoteException {
+        SyncServiceStationPortTypeProxy proxy = new SyncServiceStationPortTypeProxy();
+        proxy.setEndpoint("http://211.88.20.132:8040/services/syncServiceStation?wsdl");
+        SyncServiceStationPortType portType = proxy.getSyncServiceStationPortType();
+        String in = "<?xml version='1.0' encoding='UTF-8'?>"+xmlBody;
+        SyncServiceStationOperationResponse response = portType
+                .syncServiceStationOperation(new SyncServiceStationOperationRequest(in));
+
+        System.out.println(response.getOut());
+        return response.getOut();
     }
 
     @RequestMapping(path = "/update")

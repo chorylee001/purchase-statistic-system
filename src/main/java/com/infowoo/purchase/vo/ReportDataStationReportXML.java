@@ -2,6 +2,7 @@ package com.infowoo.purchase.vo;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,8 +15,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JacksonXmlRootElement(localName = "serviceStation")
 public class ReportDataStationReportXML {
 
+    @JacksonXmlProperty(localName = "userId")
+    private String userId;
     @JacksonXmlProperty(localName = "rptDate")
     private String rptDate;
 

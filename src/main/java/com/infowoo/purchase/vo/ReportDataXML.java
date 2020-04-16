@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JacksonXmlRootElement(localName = "items")
+//@JacksonXmlRootElement(localName = "items")
 public class ReportDataXML {
 
     @JacksonXmlProperty(localName = "serviceStation")
