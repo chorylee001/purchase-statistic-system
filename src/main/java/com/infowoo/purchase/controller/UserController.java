@@ -21,9 +21,6 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
-/**
- * Created by WuKong on 2019/3/8.
- */
 @Slf4j
 @Controller
 public class UserController extends BaseController {
