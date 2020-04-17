@@ -1,4 +1,4 @@
-package com.infowoo.purchase.entity;
+package com.infowoo.purchase.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReportData {
+public class ReportDataVo {
 
     private Long id;
 
@@ -21,19 +21,14 @@ public class ReportData {
     private Integer type;
 
     /**
-     * 代买总订单数
-     */
-    private Integer buyCount;
-    /**
-     * 销售总订单数
-     */
-    private Integer sellCount;
-
-    /**
      * 金额
      */
     private Double amount;
 
+    /**
+     * 大类
+     */
+    private Integer parentCategory;
 
     /**
      * 小类
@@ -43,17 +38,12 @@ public class ReportData {
     /**
      * 上报日期
      */
-    private String reportTime;
+    private Date reportTime;
 
     /**
      * 上报用户
      */
     private String reportUser;
-
-    /**
-     * 创建用户
-     */
-    private Long createdUser;
 
     /**
      * 创建时间
@@ -64,5 +54,4 @@ public class ReportData {
      * 更新时间
      */
     private Date updateTime;
-
 }

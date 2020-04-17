@@ -27,6 +27,14 @@ public class UserInfo {
 
     private String salt;
 
+    /**
+     * 站点状态
+     * 0 删除
+     * 1 正常
+     * 2 禁用
+     */
+    private Integer status;
+
     private Date createTime;
 
     private Date updateTime;
@@ -34,14 +42,11 @@ public class UserInfo {
     private StationInfo stationInfo;
 
 
-
-    private Integer state;
-
-    private Long companyId;
-
     private Set<String> roles;
 
     private Set<String> permissions;
+
+    private Long companyId;
 
     private CompanyInfo companyInfo;
 

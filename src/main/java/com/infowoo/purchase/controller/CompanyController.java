@@ -84,7 +84,7 @@ public class CompanyController extends BaseController{
             }
             UserInfo userInfoVo = new UserInfo();
             userInfoVo.setUsername(username);
-            userInfoVo.setCompanyId(companyId);
+            userInfoVo.setStationId(companyId);
             userInfoVo.setRealName(userName);
             userInfoVo.setRoles(new HashSet<String>(){{
                 add("guest");

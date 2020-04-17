@@ -10,10 +10,13 @@ import com.infowoo.purchase.config.SyncServiceStationOperationRequest;
 import com.infowoo.purchase.config.SyncServiceStationOperationResponse;
 import com.infowoo.purchase.config.SyncServiceStationPortType;
 import com.infowoo.purchase.config.SyncServiceStationPortTypeProxy;
+import com.infowoo.purchase.entity.ReportData;
+import com.infowoo.purchase.entity.UserInfo;
 import com.infowoo.purchase.entity.VoiceRecordIntent;
 import com.infowoo.purchase.model.JsonResult;
 import com.infowoo.purchase.service.IReportService;
 import com.infowoo.purchase.utils.DateUtil;
+import com.infowoo.purchase.utils.UserUtil;
 import com.infowoo.purchase.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.rmi.RemoteException;
 import java.util.*;
 
@@ -55,42 +59,88 @@ public class ReportController {
 
     @RequestMapping(path = "/o_save")
     public @ResponseBody
-    JsonResult save() throws JsonProcessingException {
+    JsonResult save(Integer buyCount, Integer sellCount, Integer[] buyChildCategorys, Double[] buyAmounts,
+                    Integer[] sellChildCategorys, Double[] sellAmounts,
+                    String reportTime, String reportUser, HttpServletRequest request) throws JsonProcessingException {
+
+        UserInfo userInfo = UserUtil.getUser();
+
+        buyCount = buyChildCategorys.length;
+        sellCount = sellChildCategorys.length;
+
+        Integer cate = 0;
+        Double amount = 0.0;
+        ReportData reportData = null;
+
+        /**
+         * 商务部上报数据格式对象
+         */
+        List<ReportDataCommodityXML> commodityXMLs = new ArrayList();
+        ReportDataCommodityXML commodityXML;
+        for(int i=0;i<buyCount;i++){
+            cate = buyChildCategorys[i];
+            amount = buyAmounts[i];
+
+            reportData = ReportData.builder()
+                    .type(1)
+                    .childCategory(cate)
+                    .amount(amount)
+                    .reportUser(reportUser)
+                    .reportTime(reportTime)
+                    .createdUser(userInfo.getId())
+                    .createTime(new Date())
+                    .updateTime(new Date())
+                    .build();
+            reportService.save(reportData);
+
+            commodityXML = ReportDataCommodityXML
+                    .builder()
+                    .commId(cate)
+                    .money(amount)
+                    .build();
+            commodityXMLs.add(commodityXML);
+        }
+
+        for(int i=0;i<sellCount;i++){
+            cate = sellChildCategorys[i];
+            amount = sellAmounts[i];
+
+            reportData = ReportData.builder()
+                    .type(2)
+                    .childCategory(cate)
+                    .amount(amount)
+                    .reportUser(reportUser)
+                    .reportTime(reportTime)
+                    .createdUser(userInfo.getId())
+                    .createTime(new Date())
+                    .updateTime(new Date())
+                    .build();
+            reportService.save(reportData);
+
+            commodityXML = ReportDataCommodityXML
+                    .builder()
+                    .commId(cate)
+                    .money(amount)
+                    .build();
+            commodityXMLs.add(commodityXML);
+        }
 
         //构造xml格式数据并发送
-
         List<ReportDataStationDataXML> reportDataStationDataXMLS = new ArrayList<>();
-
-        List<ReportDataCommodityXML> commodityXMLs = new ArrayList();
-        ReportDataCommodityXML commodityXML = ReportDataCommodityXML
-                .builder()
-                .commId(12)
-                .money(1750.00)
-                .build();
-        commodityXMLs.add(commodityXML);
-
-
-        commodityXML = ReportDataCommodityXML
-                .builder()
-                .commId(6)
-                .money(1750.00)
-                .build();
-        commodityXMLs.add(commodityXML);
-
         ReportDataStationDataXML stationDataXML = ReportDataStationDataXML
                 .builder()
-                .code(17354807190L)
-                .name("达布达尔村")
-                .countyType(2)
-                .buyOrder(15)
-                .saleOrder(3)
+                .code(userInfo.getStationInfo().getId())
+                .name(userInfo.getStationInfo().getStationName())
+                .countyType(userInfo.getStationInfo().getStationType())
+                .buyOrder(buyCount)
+                .saleOrder(sellCount)
                 .commodityXML(commodityXMLs)
                 .build();
         reportDataStationDataXMLS.add(stationDataXML);
 
         ReportDataStationReportXML stationReportXML = ReportDataStationReportXML
                 .builder()
-                .userId("202004161600")
+                .userId("653131")
                 .rptDate(DateUtil.getFormat().format(new Date()))
                 .serviceStationReport(reportDataStationDataXMLS)
                 .build();
@@ -111,7 +161,7 @@ public class ReportController {
         } catch (RemoteException e) {
             e.printStackTrace();
         }*/
-        return null;
+        return JsonResult.buildSuccessResult("上报成功");
     }
 
     private String dataSend(String xmlBody) throws RemoteException {

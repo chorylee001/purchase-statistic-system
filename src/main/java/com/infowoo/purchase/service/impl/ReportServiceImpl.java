@@ -1,5 +1,6 @@
 package com.infowoo.purchase.service.impl;
 
+import com.infowoo.purchase.entity.ReportData;
 import com.infowoo.purchase.mapper.ReportDataMapper;
 import com.infowoo.purchase.service.IReportService;
 import com.infowoo.purchase.vo.Pagination;
@@ -20,5 +21,10 @@ public class ReportServiceImpl implements IReportService {
         Pagination p = new Pagination(start, pageSize, totalCount);
         p.setList(reportDataMapper.getList(start,pageSize));
         return p;
+    }
+
+    @Override
+    public int save(ReportData reportData){
+        return reportDataMapper.insert(reportData);
     }
 }

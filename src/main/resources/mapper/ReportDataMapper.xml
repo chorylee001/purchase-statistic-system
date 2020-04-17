@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.infowoo.purchase.mapper.ReportDataMapper">
+
+  <resultMap id="BaseResultMap" type="com.infowoo.purchase.entity.ReportData">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="order_amount" jdbcType="DOUBLE" property="orderAmount" />
+    <result column="parent_category" jdbcType="INTEGER" property="parentCategory" />
+    <result column="child_category" jdbcType="INTEGER" property="childCategory" />
+    <result column="report_time" jdbcType="TIMESTAMP" property="reportTime" />
+    <result column="report_user" jdbcType="VARCHAR" property="reportUser" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updatedTime" />
+  </resultMap>
+
+  <resultMap id="DataReportStationMap" type="com.infowoo.purchase.vo.DataReportStationVo">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="station_name" jdbcType="VARCHAR" property="stationName" />
+    <result column="station_type" jdbcType="INTEGER" property="stationType" />
+    <result column="report_time" jdbcType="TIMESTAMP" property="reportTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+
+
+  <insert id="insert" parameterType="com.infowoo.purchase.entity.ReportData">
+    insert into purchase_report_data (`type`, amount,child_category,report_time,report_user,created_user,
+      create_time, update_time
+      )
+      values ( #{type,jdbcType=INTEGER}, #{amount,jdbcType=DOUBLE},#{childCategory,jdbcType=INTEGER},
+      #{reportTime,jdbcType=VARCHAR},#{reportUser,jdbcType=VARCHAR},#{createdUser,jdbcType=BIGINT},
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.infowoo.purchase.entity.CompanyInfo">
+    insert into company_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="companyName != null">
+        company_name,
+      </if>
+      <if test="expiredTime != null">
+        expired_time,
+      </if>
+      <if test="createdAt != null">
+        created_at,
+      </if>
+      <if test="updatedAt != null">
+        updated_at,
+      </if>
+      <if test="companyDesc != null">
+        company_desc,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="companyName != null">
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="expiredTime != null">
+        #{expiredTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="companyDesc != null">
+        #{companyDesc,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="findCompanyById" parameterType="java.util.Map" resultMap="BaseResultMap">
+    SELECT  * from company_info WHERE id=#{companyId}
+  </select>
+
+  <select id="getAll" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+
+    select * from company_info
+    where 1=1
+    <if test="status != null">
+      and status=#{status}
+    </if>
+    <!--<choose>
+      <when test="status != null">
+        and status=#{status}
+      </when>
+      <otherwise>
+        and status=1
+      </otherwise>
+    </choose>-->
+  </select>
+
+  <select id="getList" parameterType="java.util.Map" resultMap="DataReportStationMap">
+
+    select station.id,station.station_name,station.station_type,report.report_time,min(report.create_time) create_time
+    from purchase_station_info station
+    left join user_info ui on station.id=ui.station_id
+    left join purchase_report_data report on ui.id=report.created_user
+    group by station.id,station.station_name,station.station_type,report.report_time limit #{start},#{pageSize};
+  </select>
+
+  <select id="getCount"  resultType="java.lang.Integer">
+    select count(*) from (
+      select station.id,station.station_name,station.station_type,report.report_time,min(report.create_time) create_time
+  from purchase_station_info station
+  left join user_info ui on station.id=ui.station_id
+  left join purchase_report_data report on ui.id=report.created_user
+  group by station.id,station.station_name,station.station_type,report.report_time
+  ) a
+  </select>
+
+  <select id="getListByNameAndStatus" parameterType="java.util.Map" resultMap="BaseResultMap">
+
+    select * from company_info
+    where 1=1
+    <if test="status != null">
+      and status=#{status}
+    </if>
+    <if test="companyName != null">
+      and company_name like CONCAT(#{companyName},'%')
+    </if>
+  </select>
+
+</mapper>

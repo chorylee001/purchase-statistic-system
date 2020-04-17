@@ -16,7 +16,16 @@
     <div class="box box-primary">
         <form class="form-horizontal main-from" id="mainForm" action="/report/o_save" method="post">
             <div class="box-header with-border">
-                <h3 class="box-title">代买</h3>
+                <div class="col-md-2">
+                    <h3 class="box-title">代买</h3>
+                </div>
+                <div class="col-md-6">
+                    <label class="col-sm-4">代买总订单数<label class="warn-star">*</label></label>
+                    <div class="col-sm-4">
+                        <input type="text" name="buyCount" class="form-control" placeholder="请输入代买总订单数" required>
+                    </div>
+                </div>
+
             </div>
             <!-- /.box-header -->
             <div class="box-body">
@@ -27,20 +36,20 @@
                     <div class="col-md-4">
                         <label class="col-sm-4 control-label">代买商品类别<label class="warn-star">*</label></label>
                         <div class="col-sm-8">
-                            <select class="form-control select2 parent_category col-sm-8">
-                                <option value="=-1">请选择1</option>
+                            <select class="form-control select2 buy_parent_category col-sm-8" name="buyParentCategorys">
+                                <option value="=-1">请选择大类</option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <select class="form-control select2 child_category">
-                            <option selected="selected">请选择2</option>
+                        <select class="form-control select2 buy_child_category" name="buyChildCategorys">
+                            <option value="-1">请选择小类</option>
                         </select>
                     </div>
                     <div class="col-md-4">
                         <label class="col-sm-4 control-label">代买总金额<label class="warn-star">*</label></label>
                         <div class="col-sm-8">
-                            <input type="text" name="documentDesc" class="form-control" placeholder="请输入上报日期" required>
+                            <input type="text" name="buyAmounts" class="form-control" placeholder="请输入代买总金额" required>
                         </div>
                     </div>
                 </div>
@@ -49,10 +58,19 @@
                 </div>
             </div>
 
-
             <div class="box-header with-border">
-                <h3 class="box-title">销售</h3>
+                <div class="col-md-2">
+                    <h3 class="box-title">销售</h3>
+                </div>
+                <div class="col-md-6">
+                    <label class="col-sm-4">销售总订单数<label class="warn-star">*</label></label>
+                    <div class="col-sm-4">
+                        <input type="text" name="sellCount" class="form-control" placeholder="请输入销售总订单数" required>
+                    </div>
+                </div>
+
             </div>
+
             <!-- /.box-header -->
             <div class="box-body">
                 <div class="row form-group">
@@ -62,20 +80,20 @@
                     <div class="col-md-4">
                         <label class="col-sm-4 control-label">销售商品类别<label class="warn-star">*</label></label>
                         <div class="col-sm-8">
-                            <select class="form-control select2 parent_category col-sm-8" id="parent_category">
-                                <option value="=-1">请选择1</option>
+                            <select class="form-control select2 sell_parent_category col-sm-8" name="sellParentCategorys">
+                                <option value="=-1">请选择大类</option>
                             </select>
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <select class="form-control select2 child_category" id="child_category">
-                            <option selected="selected">请选择2</option>
+                        <select class="form-control select2 sell_child_category" name="sellChildCategorys">
+                            <option value="-1">请选择小类</option>
                         </select>
                     </div>
                     <div class="col-md-4">
                         <label class="col-sm-4 control-label">销售总金额<label class="warn-star">*</label></label>
                         <div class="col-sm-8">
-                            <input type="text" name="documentDesc" class="form-control" placeholder="请输入上报日期" required>
+                            <input type="text" name="sellAmounts" class="form-control" placeholder="请输入销售总金额" required>
                         </div>
                     </div>
                 </div>
@@ -87,14 +105,17 @@
             <div class="box-body">
                 <div class="form-group">
                     <label class="col-sm-2 control-label">上报日期<label class="warn-star">*</label></label>
-                    <div class="col-sm-8">
-                        <input type="text" name="documentDesc" class="form-control" placeholder="请输入上报日期" required>
+                    <div class="col-sm-8 input-group date form_time" data-date-format="yyyy-mm-dd" data-link-format="yyyy-mm-dd">
+                        <input class="form-control" value="" size="16" type="text" name="reportTime">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-remove"></span></span>
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-time"></span></span>
+<!--                        <input type="text" name="reportTime" class="form-control" placeholder="请输入上报日期" required>-->
                     </div>
                 </div>
                 <div class="form-group">
                     <label class="col-sm-2 control-label">填报人<label class="warn-star">*</label></label>
                     <div class="col-sm-8">
-                        <input type="text" name="documentDesc" class="form-control" placeholder="请添加小于20个汉字的填报人名称" required>
+                        <input type="text" name="reportUser" class="form-control" placeholder="请添加小于20个汉字的填报人名称" required>
                     </div>
                 </div>
             </div>
@@ -106,128 +127,111 @@
     </div>
 </section>
 <script th:inline="javascript">
+
+    //初始化参数
+    var buyParentCategory = ['农产品','工业消费品','生产资料'];
+    var buyChildCategory =[
+        [
+            [4,'1粮油类'],[5,'2生鲜食品类'],[6,'3干货类']
+        ],
+        [
+            [8,'1休闲食品类'],[9,'2烟酒类'],[10,'3服装、鞋帽、针纺织品类'],[11,'4化妆品类'],
+            [12,'5金银珠宝类'],[13,'6日用品类'],[14,'7家用电器和音像器材类'],[15,'8中西药品类'],
+            [16,'9文化办公用品类'],[17,'10家具类'],[18,'11通讯器材类'],[19,'12建筑及装潢材料类']
+        ],
+        [
+            [20,'1农用生产资料类'],[21,'2化工产品类'],[22,'3机电类'],[23,'4木材类']
+        ]
+    ];
+
+    var sellParentCategory = ['农产品','工业消费品','生产资料'];
+    var sellChildCategory =[
+        [
+            [27,'1粮油类'],[28,'2生鲜食品类'],[29,'3干货类']
+        ],
+        [
+            [30,'1休闲食品类'],[32,'2烟酒类'],[33,'3服装、鞋帽、针纺织品类'],[34,'4化妆品类'],
+            [35,'5金银珠宝类'],[36,'6日用品类'],[37,'7家用电器和音像器材类'],[38,'8中西药品类'],
+            [39,'9文化办公用品类'],[40,'10家具类'],[41,'11通讯器材类'],[42,'12建筑及装潢材料类']
+        ],
+        [
+            [43,'1农用生产资料类'],[44,'2化工产品类'],[45,'3机电类'],[46,'4木材类']
+        ]
+    ];
+
+    function buyChange(e){
+
+        var pIndex=0;
+        //第一个不移除
+        $(e).parent().parent().next().children().children().not(":first").remove();
+        pIndex=$(e).children("option:selected").index();
+        var child =buyChildCategory[pIndex-1];
+        //循环
+        for (var i = 0; i < child.length; i++) {
+            $(".buy_child_category").append("<option value="+child[i][0]+">"+child[i][1]+"</option>");
+        }
+    }
+    function sellChange(e) {
+        //第一个不移除
+        $(e).parent().parent().next().children().children().not(":first").remove();
+        var cIndex=0;
+        cIndex=$(e).children("option:selected").index();
+        var child =sellChildCategory[cIndex-1];
+        //循环
+        for (var i = 0; i < child.length; i++) {
+            $(".sell_child_category").append("<option value="+child[i][0]+">"+child[i][1]+"</option>");
+        }
+    }
+    function initSelector(){
+        for (var i = 0; i <buyParentCategory.length; i++) {
+            $(".buy_parent_category").append("<option value=p"+i+">"+buyParentCategory[i]+"</option>");
+        }
+        for (var i = 0; i <sellParentCategory.length; i++) {
+            $(".sell_parent_category").append("<option value=p"+i+">"+sellParentCategory[i]+"</option>");
+        }
+        initSelectorChange()
+    }
+    function initSelectorChange(){
+        $(".buy_parent_category").change(function(){
+            buyChange(this)
+        });
+        $(".sell_parent_category").change(function(){
+            sellChange(this)
+        });
+    }
     $(function () {
 
         /**
          * 增加按钮添加元素
          */
         $('.agent-add,.sell-add').on('click',function (e) {
-            $(this).parent().before($(this).parent().prev().clone())
+            $(this).parent().before($(this).parent().prev().clone());
+            initSelectorChange();
         })
 
         $('.select-control').select2();
 
-        //初始化参数
-        var parentCategory = ['农产品','工业消费品','生产资料'];
-        var childCategory =[
-            ['1粮油类','2生鲜食品类','3干货类'],
-            ['1休闲食品类','2烟酒类','3服装、鞋帽、针纺织品类','4化妆品类','5金银珠宝类','6日用品类','7家用电器和音像器材类','8中西药品类','9文化办公用品类','10家具类','11通讯器材类','12建筑及装潢材料类'],
-            ['1农用生产资料类','2化工产品类','3机电类','4木材类']
-        ];
-        for (var i = 0; i <parentCategory.length; i++) {
-            $(".parent_category").append("<option value=p"+i+">"+parentCategory[i]+"</option>");
-        }
-        var pIndex=0;
-        $(".parent_category").change(function(){
-            //第一个不移除
-            $(".child_category").children().not(":first").remove();
-            //select province value=>index
-            pIndex=$(this).children("option:selected").index();
-            //city index from 0;
-            var city =childCategory[pIndex-1];
-            //循环
-            for (var i = 0; i < city.length; i++) {
-                $("#child_category").append("<option value=c"+i+">"+city[i]+"</option>");
-            }
+        initSelector();
+
+        /*$('.form_time').datetimepicker().on('changeDate', function(ev) {
+        }).on('hide', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+        });*/
+        /*日期控件初始化*/
+        $('.form_time').datetimepicker({
+            language: 'zh-CN',
+            format:'yyyy-mm-dd',
+            weekStart: 1,
+            todayBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 2,
+            maxView:2,
+            forceParse: 0
         });
 
-
-        $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
-            checkboxClass: 'icheckbox_minimal-blue',
-            radioClass: 'iradio_minimal-blue'
-        })
-        $('input[type="checkbox"].minimal-red, input[type="radio"].minimal-red').iCheck({
-            checkboxClass: 'icheckbox_minimal-red',
-            radioClass: 'iradio_minimal-red'
-        })
-        $(".upload-audio").on('click', function (e) {
-
-        })
-        $("#audio_file").on("click", function () {
-
-            $(".header-tr").siblings("tr").remove();
-            $(this).value = '';
-            $(".fileupload-group .path-label").html("请上传wav格式文件.");
-        })
-        /**
-         * 文件选中后触发
-         */
-        $("#audio_file").on('change', function (e) {
-
-            for (var i = 0; i < this.files.length; i++) {
-                if (!checkWAVFile(this.files[i])) {
-                    $(".header-tr").siblings("tr").remove();
-                    return;
-                }
-                if (i == 0) {
-                    $(".process-body").css("display", "block");
-                }
-                var line_process = "<tr>" +
-                    "<td>" + this.files[i].name + "</td>" +
-                    "<td class='server-path'></td>" +
-                    "<td></td>" +
-                    "</tr>";
-                $(".process-body table").append(line_process);
-            }
-            $(".fileupload-group .path-label").html(document.getElementById("audio_file").files.length + "个文件");
-        })
-        /**
-         * 文件上传
-         */
-        /**
-         * 单个文件上传
-         */
-        $(".btn-upload").click(function (e) {
-
-            setModalStyle(callback_upload())
-
-        });
-
-        /**
-         * 清空模态框
-         */
-        $('#upload-modal').on('hide.bs.modal', function () {
-
-            $(".process-body").css("display", "none");
-            $(".header-tr").siblings("tr").remove();
-            //清空文件
-            document.getElementById("audio_file").value = '';
-            $("#upload-modal .modal-dialog").removeClass("modal-lg");
-        })
-
-        /**
-         * 追加文件按钮
-         */
-        $(".append-button").on('click', function (e) {
-            $("#audio_file").click();
-        })
-        /**
-         *  模态框文件提交
-         */
-        $("#upload-modal submit").click(function (e) {
-            var formData = new FormData();
-            var file = document.getElementById("audio_file");
-
-            each; //--------
-
-            formData.append("file", file.files[0]);
-            fileUpload(uploadSuccess);
-            $.ajax({
-                data: formData,
-                contentType: false,
-                processData: false//避免参数序列化
-            })
-        })
         validateForm();
         /**
          * 保存
