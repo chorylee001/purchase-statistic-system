@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.infowoo.purchase.mapper.UserBaseInfoMapper">
+  <resultMap id="BaseResultMap" type="com.infowoo.purchase.entity.UserInfo">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="real_name" jdbcType="VARCHAR" property="realName" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="contact_number" jdbcType="VARCHAR" property="contactNumber" />
+    <result column="station_id" jdbcType="BIGINT" property="stationId" />
+    <result column="salt" jdbcType="VARCHAR" property="salt" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <association property="stationInfo" javaType="com.infowoo.purchase.entity.StationInfo">
+      <result column="station_id" jdbcType="BIGINT" property="id" />
+      <result column="station_name" jdbcType="VARCHAR" property="stationName" />
+      <result column="station_code" jdbcType="VARCHAR" property="stationCode" />
+      <result column="station_type" jdbcType="INTEGER" property="stationType" />
+      <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    </association>
+  </resultMap>
+
+  <resultMap id="CompositeResultMap" type="com.infowoo.purchase.entity.UserInfo">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="password" jdbcType="VARCHAR" property="password" />
+    <result column="salt" jdbcType="VARCHAR" property="salt" />
+    <result column="state" jdbcType="INTEGER" property="state" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <association property="companyInfo" javaType="com.infowoo.purchase.entity.CompanyInfo">
+      <result column="company_id" jdbcType="BIGINT" property="id" />
+      <result column="company_name" jdbcType="VARCHAR" property="companyName" />
+      <result column="company_desc" jdbcType="VARCHAR" property="companyDesc" />
+      <result column="expired_time" jdbcType="TIMESTAMP" property="expiredTime" />
+    </association>
+    <collection property="permissions" ofType="java.lang.String" >
+      <result column="permission" jdbcType="VARCHAR"></result>
+    </collection>
+    <collection property="roles" ofType="java.lang.String" >
+      <result column="role" jdbcType="VARCHAR"></result>
+    </collection>
+  </resultMap>
+
+
+  <insert id="insert" parameterType="com.infowoo.purchase.entity.UserInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into user_info (username, real_name,
+      password, contact_number,station_id,salt, status,create_time,update_time)
+
+    values (#{username,jdbcType=VARCHAR}, #{realName,jdbcType=VARCHAR},
+      #{password,jdbcType=VARCHAR}, #{contactNumber,jdbcType=VARCHAR},
+      #{stationId,jdbcType=BIGINT},#{salt,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER},
+       #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.infowoo.purchase.entity.UserInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into user_base_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="password != null">
+        password,
+      </if>
+      <if test="salt != null">
+        salt,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null">
+        #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=INTEGER},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+
+  <select id="findUserByUsername" resultMap="BaseResultMap" parameterType="java.util.Map">
+    SELECT
+        base.*,station.id station_id,station.station_name,station.station_code,station.station_type,station.create_time
+    FROM
+        user_info base left join purchase_station_info station on base.station_id=station.id
+    WHERE base.username=#{userName}
+  </select>
+
+  <select id="getList" parameterType="java.util.Map" resultMap="CompositeResultMap">
+    SELECT
+        base.*,
+        company.company_name,
+        company.company_desc,
+        role.id role_id,
+        role.role role,
+        role.user_id user_id,
+        perm.id perm_id,
+        perm.permission permission
+    FROM
+        user_base_info base
+      LEFT JOIN user_role_info role ON base.id = role.user_id
+      LEFT JOIN user_permission_info perm on base.id = perm.user_id
+        JOIN company_info company ON base.company_id = company.id
+    WHERE 1=1
+    <if test="companyId != null">
+      AND company_id = #{companyId}
+    </if> limit #{start},#{pageSize}
+  </select>
+  <select id="getCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+    select count(*) from user_base_info where 1=1
+    <if test="companyId != null">
+      AND company_id = #{companyId}
+    </if>;
+  </select>
+</mapper>

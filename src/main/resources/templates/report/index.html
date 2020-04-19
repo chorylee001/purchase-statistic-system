@@ -19,7 +19,7 @@
               <div class="input-group-addon">
                 <i class="fa fa-calendar"></i>
               </div>
-              <input type="text" class="form-control pull-right" id="reservation" name="executeTime">
+              <input type="text" class="form-control pull-right" id="reservation" name="reportTime">
             </div>
           </div>
         </div>
@@ -49,8 +49,7 @@
               <th>上报日期</th>
               <th>站点名称</th>
               <th>站点类型</th>
-              <th>创建时间</th>
-              <th>操作</th>
+<!--              <th>操作</th>-->
             </tr>
             </thead>
             <tbody class="data-table">
@@ -167,15 +166,8 @@
             }
             return "村级服务站点";
           }
-        },
-        {
-          data: function (e) {
-            if (e.createTime) {
-              return new Date(e.createTime).format("yyyy-MM-dd hh:mm:ss");
-            }
-            return "";
-          }
-        },
+        }
+        /*,
         {
           //record/o_delete?id="+e.id+"
           data: function (e,row) {
@@ -185,7 +177,7 @@
             return html;
           },
           "width": "20%"
-        }
+        }*/
       ],
       initComplete: function (setting, json) {
         initLink();

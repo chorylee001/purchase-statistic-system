@@ -99,19 +99,40 @@
   <select id="getList" parameterType="java.util.Map" resultMap="DataReportStationMap">
 
     select station.id,station.station_name,station.station_type,report.report_time,min(report.create_time) create_time
-    from purchase_station_info station
-    left join user_info ui on station.id=ui.station_id
-    left join purchase_report_data report on ui.id=report.created_user
-    group by station.id,station.station_name,station.station_type,report.report_time limit #{start},#{pageSize};
+    from purchase_report_data report
+    join user_info ui on report.created_user=ui.id
+    join purchase_station_info station  on ui.station_id=station.id
+    where 1=1
+    <if test="startTime != null">
+      and report.report_time &gt;=#{startTime}
+    </if>
+    <if test="endTime != null">
+      and report.report_time &lt;=#{endTime}
+    </if>
+    <if test="userId != null">
+      and report.created_user=#{userId}
+    </if>
+    group by station.id,station.station_name,station.station_type,report.report_time
   </select>
 
-  <select id="getCount"  resultType="java.lang.Integer">
+  <select id="getCount" parameterType="java.util.Map"  resultType="java.lang.Integer">
     select count(*) from (
       select station.id,station.station_name,station.station_type,report.report_time,min(report.create_time) create_time
-  from purchase_station_info station
-  left join user_info ui on station.id=ui.station_id
-  left join purchase_report_data report on ui.id=report.created_user
-  group by station.id,station.station_name,station.station_type,report.report_time
+      from purchase_report_data report
+      join user_info ui on report.created_user=ui.id
+      join purchase_station_info station  on ui.station_id=station.id
+
+      where 1=1
+      <if test="startTime != null">
+        and report.report_time &gt;=#{startTime}
+      </if>
+      <if test="endTime != null">
+        and report.report_time &lt;=#{endTime}
+      </if>
+      <if test="userId != null">
+        and report.created_user=#{userId}
+      </if>
+        group by station.id,station.station_name,station.station_type,report.report_time
   ) a
   </select>
 

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.infowoo.purchase.mapper.StationInfoMapper">
+  <resultMap id="BaseResultMap" type="com.infowoo.purchase.entity.StationInfo">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="station_name" jdbcType="VARCHAR" property="stationName" />
+    <result column="station_code" jdbcType="VARCHAR" property="stationCode" />
+    <result column="station_type" jdbcType="INTEGER" property="stationType" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <insert id="insert" parameterType="com.infowoo.purchase.entity.StationInfo" useGeneratedKeys="true" keyProperty="id">
+    insert into purchase_station_info (station_name, station_code,station_type,
+      create_time,update_time
+      )
+    values (#{stationName,jdbcType=VARCHAR}, #{stationCode,jdbcType=VARCHAR}, #{stationType,jdbcType=INTEGER},
+      #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.infowoo.purchase.entity.StationInfo">
+    insert into company_info
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="companyName != null">
+        company_name,
+      </if>
+      <if test="expiredTime != null">
+        expired_time,
+      </if>
+      <if test="createdAt != null">
+        create_time,
+      </if>
+      <if test="updatedAt != null">
+        update_time,
+      </if>
+      <if test="companyDesc != null">
+        company_desc,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="companyName != null">
+        #{companyName,jdbcType=VARCHAR},
+      </if>
+      <if test="expiredTime != null">
+        #{expiredTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="companyDesc != null">
+        #{companyDesc,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="findCompanyById" parameterType="java.util.Map" resultMap="BaseResultMap">
+    SELECT  * from company_info WHERE id=#{companyId}
+  </select>
+
+  <select id="getAll" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+
+    select * from company_info
+    where 1=1
+    <if test="status != null">
+      and status=#{status}
+    </if>
+    <!--<choose>
+      <when test="status != null">
+        and status=#{status}
+      </when>
+      <otherwise>
+        and status=1
+      </otherwise>
+    </choose>-->
+  </select>
+
+  <select id="getList" parameterType="java.util.Map" resultMap="BaseResultMap">
+
+    select * from purchase_station_info limit #{start},#{pageSize};
+  </select>
+
+  <select id="getCount"  resultType="java.lang.Integer">
+    select count(*) from purchase_station_info ;
+  </select>
+
+  <select id="getListByNameAndStatus" parameterType="java.util.Map" resultMap="BaseResultMap">
+
+    select * from company_info
+    where 1=1
+    <if test="status != null">
+      and status=#{status}
+    </if>
+    <if test="companyName != null">
+      and company_name like CONCAT(#{companyName},'%')
+    </if>
+  </select>
+
+</mapper>
