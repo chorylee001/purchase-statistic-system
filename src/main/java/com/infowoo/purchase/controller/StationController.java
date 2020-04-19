@@ -1,9 +1,12 @@
 package com.infowoo.purchase.controller;
 
 import com.infowoo.purchase.entity.CompanyInfo;
+import com.infowoo.purchase.entity.StationInfo;
 import com.infowoo.purchase.entity.UserInfo;
 import com.infowoo.purchase.model.JsonResult;
-import com.infowoo.purchase.service.ICompanyService;
+import com.infowoo.purchase.service.IStationService;
+import com.infowoo.purchase.service.IUserService;
+import com.infowoo.purchase.utils.CommonUtil;
 import com.infowoo.purchase.utils.EncryptUtils;
 import com.infowoo.purchase.vo.DTResponsePageVo;
 import com.infowoo.purchase.vo.Pagination;
@@ -21,35 +24,54 @@ import java.util.HashSet;
 import java.util.Objects;
 
 @Slf4j
-@RequestMapping("/company")
+@RequestMapping("/station")
 @Controller
-public class CompanyController extends BaseController{
+public class StationController extends BaseController{
 
     @Autowired
-    private ICompanyService companyService;
+    private IStationService stationService;
+    @Autowired
+    private IUserService userService;
 
 
     @RequestMapping("/index")
     public String index(Model model) {
-        log.info("company index");
-        return "company/index";
+        return "station/index";
     }
 
 
     @RequestMapping("/add")
-    public @ResponseBody JsonResult add(@RequestParam("companyDesc") String companyDesc, @RequestParam("companyName")String companyName) {
-        log.info("company add");
-        UserInfo userInfo = getUserBaseInfo();
-        CompanyInfo companyInfo = CompanyInfo.builder().companyName(companyName).companyDesc(companyDesc).createdAt(new Date()).updatedAt(new Date()).build();
-        log.info("add username {} add companyInfo {}", userInfo.getUsername(),JSONObject.toJSONString(companyInfo));
-//        companyService.addCompany(companyInfo);
-        return JsonResult.buildSuccessResult("操作成功",companyInfo);
+    public @ResponseBody JsonResult add(StationInfo stationInfo,UserInfo userInfo) throws Exception {
+
+        log.info("station add");
+        StationInfo stationInf = StationInfo
+                .builder()
+                .stationName(stationInfo.getStationName())
+                .stationCode(stationInfo.getStationCode())
+                .stationType(stationInfo.getStationType())
+                .createTime(new Date())
+                .updateTime(new Date()).build();
+        stationService.addStation(stationInf);
+
+        UserInfo userInf = UserInfo.builder()
+                .stationId(stationInf.getId())
+                .username(userInfo.getUsername())
+                .realName(userInfo.getRealName())
+                .contactNumber(userInfo.getContactNumber())
+                .status(1)
+                .createTime(new Date())
+                .updateTime(new Date())
+                .build();
+
+        userInf.setPassword(EncryptUtils.md5(EncryptUtils.md5(userInfo.getPassword(),""), userInf.getSalt()));
+        userService.addUser(userInf);
+        return JsonResult.buildSuccessResult("操作成功",stationInf);
     }
 
 
     @RequestMapping("/v_list")
     public @ResponseBody  String list(Integer start, Integer length) {
-        Pagination page = null;//companyService.getCompanyList(start,length);
+        Pagination page = stationService.getStationList(start,length);
         DTResponsePageVo responsePageVo = DTResponsePageVo.builder()
                 .data(page.getList())
                 .recordsTotal(page.getTotalCount())
@@ -60,7 +82,7 @@ public class CompanyController extends BaseController{
 
     @RequestMapping("/v_user_list")
     public @ResponseBody  String userList(Integer start, Integer length,Long companyId) {
-        Pagination page = null;//companyService.getUserList(start,length,companyId);
+        Pagination page = null;//stationService.getUserList(start,length,companyId);
         DTResponsePageVo responsePageVo = DTResponsePageVo.builder()
                 .data(page.getList())
                 .recordsTotal(page.getTotalCount())
@@ -70,15 +92,15 @@ public class CompanyController extends BaseController{
 
     @RequestMapping("/user_index")
     public String userIndex(Model model) {
-        log.info("company user index");
-//        model.addAttribute("companys", companyService.getAllCompany());
+        log.info("station user index");
+//        model.addAttribute("companys", stationService.getAllCompany());
         return "company/user_index";
     }
 
     @RequestMapping("/add_user")
     public @ResponseBody JsonResult addUser(@RequestParam("username")String username,@RequestParam("userName")String userName,@RequestParam("password")String password,@RequestParam("companyId")Long companyId) {
         try {
-            UserInfo oldUserInfo = companyService.findUserByUsername(username);
+            UserInfo oldUserInfo = stationService.findUserByUsername(username);
             if(Objects.nonNull(oldUserInfo)){
                 return JsonResult.buildErrorStateResult("账号已经存在",null);
             }
@@ -91,7 +113,7 @@ public class CompanyController extends BaseController{
             }});
             String pass = EncryptUtils.md5(EncryptUtils.md5(password,""), userInfoVo.getSalt());
             userInfoVo.setPassword(pass);
-//            companyService.addUser(userInfoVo);
+//            stationService.addUser(userInfoVo);
         } catch (Exception e) {
             log.error(e.getMessage(),e);
             return JsonResult.buildErrorStateResult("添加失败，联系相关人员");

@@ -6,7 +6,8 @@ import com.infowoo.purchase.vo.Pagination;
 public interface IReportService {
 
 
-    Pagination getReportList(Integer start, Integer pageSize);
+
+    Pagination getReportList(String startTime,String endTime,Long userId,Integer start, Integer pageSize);
 
     int save(ReportData reportData);
 }

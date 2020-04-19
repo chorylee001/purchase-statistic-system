@@ -29,8 +29,14 @@ public interface ReportDataMapper {
      * @return
      */
     List<ReportData> getAll(Integer status);
-    List<ReportData> getList(@Param("start") Integer start, @Param("pageSize") Integer pageSize);
-    int getCount();
+    List<ReportData> getList(@Param("startTime") String startTime,
+                             @Param("endTime") String endTime,
+                             @Param("userId") Long userId,
+                             @Param("start") Integer start,
+                             @Param("pageSize") Integer pageSize);
+    int getCount(@Param("startTime") String startTime,
+                 @Param("endTime") String endTime,
+                 @Param("userId")Long userId);
 
     /**
      * 根据企业名称和状态模糊查询

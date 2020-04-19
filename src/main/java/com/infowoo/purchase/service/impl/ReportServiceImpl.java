@@ -14,12 +14,13 @@ public class ReportServiceImpl implements IReportService {
     private ReportDataMapper reportDataMapper;
 
     @Override
-    public Pagination getReportList(Integer start, Integer pageSize) {
+    public Pagination getReportList(String startTime,String endTime,Long userId,Integer start, Integer pageSize){
+
         start = start == null?0:start;
         pageSize = pageSize==null?10:pageSize;
-        int totalCount = reportDataMapper.getCount();
+        int totalCount = reportDataMapper.getCount(startTime,endTime,userId);
         Pagination p = new Pagination(start, pageSize, totalCount);
-        p.setList(reportDataMapper.getList(start,pageSize));
+        p.setList(reportDataMapper.getList(startTime,endTime,userId,start,pageSize));
         return p;
     }
 

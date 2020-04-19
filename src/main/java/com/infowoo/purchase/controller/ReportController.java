@@ -37,13 +37,24 @@ public class ReportController {
     private IReportService reportService;
 
     @RequestMapping(value = "/index")
-    public String index(Model model){
+    public String index(){
         return "report/index";
     }
 
     @RequestMapping(path = "/v_list")
-    public @ResponseBody  String list(Integer start, Integer length) {
-        Pagination page = reportService.getReportList(start,length);
+    public @ResponseBody  String list(String reportTime,Integer start, Integer length) {
+
+        String[] timeRange = DateUtil.getTimeRange(reportTime,"-",true);
+
+        UserInfo userInfo = UserUtil.getUser();
+        Pagination page;
+        if(userInfo.getStationId() == 0){
+            //管理员
+            page = reportService.getReportList(timeRange[0],timeRange[1],null,start,length);
+        }else{
+            page = reportService.getReportList(timeRange[0],timeRange[1],userInfo.getId(),start,length);
+        }
+
         DTResponsePageVo responsePageVo = DTResponsePageVo.builder()
                 .data(page.getList())
                 .recordsTotal(page.getTotalCount())
@@ -58,8 +69,7 @@ public class ReportController {
     }
 
     @RequestMapping(path = "/o_save")
-    public @ResponseBody
-    JsonResult save(Integer buyCount, Integer sellCount, Integer[] buyChildCategorys, Double[] buyAmounts,
+    public String save(Integer buyCount, Integer sellCount, Integer[] buyChildCategorys, Double[] buyAmounts,
                     Integer[] sellChildCategorys, Double[] sellAmounts,
                     String reportTime, String reportUser, HttpServletRequest request) throws JsonProcessingException {
 
@@ -77,52 +87,62 @@ public class ReportController {
          */
         List<ReportDataCommodityXML> commodityXMLs = new ArrayList();
         ReportDataCommodityXML commodityXML;
-        for(int i=0;i<buyCount;i++){
-            cate = buyChildCategorys[i];
-            amount = buyAmounts[i];
+        if(buyCount>0){
+            for(int i=0;i<buyCount;i++){
+                cate = buyChildCategorys[i];
+                if(cate == -1){
+                    continue;
+                }
+                amount = buyAmounts[i];
 
-            reportData = ReportData.builder()
-                    .type(1)
-                    .childCategory(cate)
-                    .amount(amount)
-                    .reportUser(reportUser)
-                    .reportTime(reportTime)
-                    .createdUser(userInfo.getId())
-                    .createTime(new Date())
-                    .updateTime(new Date())
-                    .build();
-            reportService.save(reportData);
+                reportData = ReportData.builder()
+                        .type(1)
+                        .childCategory(cate)
+                        .amount(amount)
+                        .reportUser(reportUser)
+                        .reportTime(reportTime)
+                        .createdUser(userInfo.getId())
+                        .createTime(new Date())
+                        .updateTime(new Date())
+                        .build();
+                reportService.save(reportData);
 
-            commodityXML = ReportDataCommodityXML
-                    .builder()
-                    .commId(cate)
-                    .money(amount)
-                    .build();
-            commodityXMLs.add(commodityXML);
+                commodityXML = ReportDataCommodityXML
+                        .builder()
+                        .commId(cate)
+                        .money(amount)
+                        .build();
+                commodityXMLs.add(commodityXML);
+            }
         }
 
-        for(int i=0;i<sellCount;i++){
-            cate = sellChildCategorys[i];
-            amount = sellAmounts[i];
+        if(sellCount>0){
+            for(int i=0;i<sellCount;i++){
+                cate = sellChildCategorys[i];
+                if(cate == -1){
+                    continue;
+                }
+                amount = sellAmounts[i];
 
-            reportData = ReportData.builder()
-                    .type(2)
-                    .childCategory(cate)
-                    .amount(amount)
-                    .reportUser(reportUser)
-                    .reportTime(reportTime)
-                    .createdUser(userInfo.getId())
-                    .createTime(new Date())
-                    .updateTime(new Date())
-                    .build();
-            reportService.save(reportData);
+                reportData = ReportData.builder()
+                        .type(2)
+                        .childCategory(cate)
+                        .amount(amount)
+                        .reportUser(reportUser)
+                        .reportTime(reportTime)
+                        .createdUser(userInfo.getId())
+                        .createTime(new Date())
+                        .updateTime(new Date())
+                        .build();
+                reportService.save(reportData);
 
-            commodityXML = ReportDataCommodityXML
-                    .builder()
-                    .commId(cate)
-                    .money(amount)
-                    .build();
-            commodityXMLs.add(commodityXML);
+                commodityXML = ReportDataCommodityXML
+                        .builder()
+                        .commId(cate)
+                        .money(amount)
+                        .build();
+                commodityXMLs.add(commodityXML);
+            }
         }
 
         //构造xml格式数据并发送
@@ -140,7 +160,7 @@ public class ReportController {
 
         ReportDataStationReportXML stationReportXML = ReportDataStationReportXML
                 .builder()
-                .userId("653131")
+                .userId("6531310030")
                 .rptDate(DateUtil.getFormat().format(new Date()))
                 .serviceStationReport(reportDataStationDataXMLS)
                 .build();
@@ -161,7 +181,7 @@ public class ReportController {
         } catch (RemoteException e) {
             e.printStackTrace();
         }*/
-        return JsonResult.buildSuccessResult("上报成功");
+        return index();
     }
 
     private String dataSend(String xmlBody) throws RemoteException {
