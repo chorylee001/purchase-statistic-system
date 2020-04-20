@@ -41,17 +41,23 @@ public class StationController extends BaseController{
 
 
     @RequestMapping("/add")
-    public @ResponseBody JsonResult add(StationInfo stationInfo,UserInfo userInfo) throws Exception {
+    public @ResponseBody JsonResult add(StationInfo stationInfo,UserInfo userInfo,Integer stationId,Integer userId,Integer updatePass) throws Exception {
 
-        log.info("station add");
+
+
         StationInfo stationInf = StationInfo
                 .builder()
                 .stationName(stationInfo.getStationName())
                 .stationCode(stationInfo.getStationCode())
                 .stationType(stationInfo.getStationType())
-                .createTime(new Date())
-                .updateTime(new Date()).build();
-        stationService.addStation(stationInf);
+                .build();
+        if(Objects.nonNull(stationId)){
+            stationInf.setId(stationId.longValue());
+            stationInf.setUpdateTime(new Date());
+        }else{
+            stationInf.setCreateTime(new Date());
+        }
+        stationService.saveOrUpdate(stationInf);
 
         UserInfo userInf = UserInfo.builder()
                 .stationId(stationInf.getId())
@@ -59,12 +65,17 @@ public class StationController extends BaseController{
                 .realName(userInfo.getRealName())
                 .contactNumber(userInfo.getContactNumber())
                 .status(1)
-                .createTime(new Date())
-                .updateTime(new Date())
                 .build();
-
-        userInf.setPassword(EncryptUtils.md5(EncryptUtils.md5(userInfo.getPassword(),""), userInf.getSalt()));
-        userService.addUser(userInf);
+        if(Objects.nonNull(userId)){
+            userInf.setId(userId.longValue());
+            userInf.setUpdateTime(new Date());
+        }else{
+            userInf.setCreateTime(new Date());
+        }
+        if(Objects.isNull(userId)||Objects.nonNull(updatePass)){
+            userInf.setPassword(EncryptUtils.md5(EncryptUtils.md5(userInfo.getPassword(),""), userInf.getSalt()));
+        }
+        userService.saveOrUpdate(userInf);
         return JsonResult.buildSuccessResult("操作成功",stationInf);
     }
 
@@ -77,6 +88,12 @@ public class StationController extends BaseController{
                 .recordsTotal(page.getTotalCount())
                 .status(Boolean.TRUE).build();
         return JSONObject.toJSONString(responsePageVo);
+    }
+
+    @RequestMapping("/v_edit")
+    public @ResponseBody JsonResult edit(Long id){
+
+        return JsonResult.buildSuccessResult("success.",stationService.findStationById(id));
     }
 
 

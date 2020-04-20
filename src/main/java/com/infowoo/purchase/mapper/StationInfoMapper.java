@@ -9,17 +9,18 @@ public interface StationInfoMapper {
 
     /**
      * 保存
-     * @param record
+     * @param stationInfo
      * @return
      */
-    int insert(StationInfo record);
+    int insert(StationInfo stationInfo);
 
+    int update(StationInfo stationInfo);
     /**
      * 根据ID查询
-     * @param companyId
+     * @param stationId
      * @return
      */
-    StationInfo findStationById(@Param("companyId") Long companyId);
+    StationInfo findStationById(@Param("stationId") Long stationId);
 
     int insertSelective(StationInfo record);
 

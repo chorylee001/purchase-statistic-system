@@ -37,7 +37,7 @@
     <collection property="permissions" ofType="java.lang.String" >
       <result column="permission" jdbcType="VARCHAR"></result>
     </collection>
-    <collection property="roles" ofType="java.lang.String" >
+    <collection property="roles" ofType="java.lang.String">
       <result column="role" jdbcType="VARCHAR"></result>
     </collection>
   </resultMap>
@@ -52,6 +52,26 @@
       #{stationId,jdbcType=BIGINT},#{salt,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER},
        #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
+
+  <update id="update" parameterType="com.infowoo.purchase.entity.UserInfo" useGeneratedKeys="true" keyProperty="id">
+      update user_info ui set
+        <if test="username != null">
+          username=#{username},
+        </if>
+        <if test="realName != null">
+          real_name=#{realName},
+        </if>
+        <if test="password != null">
+          password=#{password},
+        </if>
+        <if test="contactNumber != null">
+          contact_number=#{contactNumber},
+        </if>
+        ui.id=ui.id
+       where ui.id=#{id}
+  </update>
+
+
   <insert id="insertSelective" parameterType="com.infowoo.purchase.entity.UserInfo" useGeneratedKeys="true" keyProperty="id">
     insert into user_base_info
     <trim prefix="(" suffix=")" suffixOverrides=",">

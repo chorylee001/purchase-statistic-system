@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<body class="hold-transition skin-blue sidebar-mini">
+<section class="content-header">
+  <h1>
+    站点管理
+  </h1>
+</section>
+<!-- Main content -->
+<section class="content">
+  <div class="box box-primary">
+    <form class="form-horizontal" id="query_form">
+      <div class="box-footer">
+        <div class="col-sm-10">
+
+        </div>
+
+        <div class="col-sm-1">
+          <button type="button" class="btn btn-success" id="add_station">添&nbsp;加&nbsp;站&nbsp;点</button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="box">
+        <div class="box-body">
+          <table id="data_table" class="table table-bordered table-hover">
+            <thead>
+            <tr>
+              <th>站点ID</th>
+              <th>站点名称</th>
+              <th>站点类型</th>
+              <th>站点编码</th>
+              <th>创建时间</th>
+              <th>操作</th>
+            </tr>
+            </thead>
+            <tbody class="data-table">
+            </tbody>
+          </table>
+
+          <div class="modal fade" id="station_modal">
+            <div class="modal-dialog">
+              <form class="modal-content audio-form" id="station_form" action="/station/add">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title">站点信息</h4>
+                </div>
+                <div class="modal-body">
+
+                  <div class="box-body">
+                    <table class="table table-bordered">
+                      <input type="hidden" id="station_id" name="stationId">
+                      <input type="hidden" id="user_id" name="userId">
+                      <input type="hidden" id="pre_password" name="pre_password"/>
+                      <input type="hidden" id="updatePass" name="updatePass"/>
+                      <tr>
+                        <td>站点名称</td>
+                        <td>
+                          <input type="text" name="stationName" id="stationName" class="form-control"  required>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>站点编码</td>
+                        <td>
+                          <input type="text" name="stationCode" id="stationCode" class="form-control"  required>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>站点类型</td>
+                        <td>
+                          <select class="form-control select2 station_type col-sm-8" id="stationType" name="stationType">
+                            <option value="1">乡镇级服务站点</option>
+                            <option value="2">村级服务站点</option>
+                          </select>
+
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>用户姓名</td>
+                        <td>
+                          <input type="text" name="realName" id="realName" class="form-control"  required>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>联系电话</td>
+                        <td>
+                          <input type="text" name="contactNumber" id="contactNumber" class="form-control"  required>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>账号</td>
+                        <td>
+                          <input type="text" name="username" id="username" class="form-control"  required>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>密码</td>
+                        <td>
+                          <input type="password" name="password" id="password" class="form-control"  required>
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+                <div class="modal-footer row btn-only-box">
+                  <button type="button" class="btn btn-primary submit" data-dismiss="modal">确定</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <div class="modal fade" id="detail_modal">
+            <div class="modal-dialog">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">站点信息</h4>
+              </div>
+              <div class="modal-body">
+
+                <div class="box-body">
+                  <table class="table table-bordered">
+                    <tr>
+                      <td>站点名称</td>
+                      <td>
+                        <input type="text" name="stationName" id="stationName" class="form-control"  disabled>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>站点编码</td>
+                      <td>
+                        <input type="text" name="stationCode" id="stationCode" class="form-control"  disabled>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>站点类型</td>
+                      <td>
+                        <input type="text" name="stationCode" id="stationType" class="form-control"  disabled>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>用户姓名</td>
+                      <td>
+                        <input type="text" name="realName" id="realName" class="form-control"  disabled>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>联系电话</td>
+                      <td>
+                        <input type="text" name="contactNumber" id="contactNumber" class="form-control"  disabled>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>账号</td>
+                      <td>
+                        <input type="text" name="username" id="username" class="form-control"  disabled>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+              <div class="modal-footer btn-only-box">
+                <button type="button" class="btn btn-primary submit" data-dismiss="modal">确定</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div th:include="common/data-script::data"></div>
+
+<script th:inline="javascript">
+    $(function () {
+
+        $('.select-control').select2();
+        $("#data_table").dataTable({
+            serverSide: true,//分页，取数据等等的都放到服务端去
+            processing: true,//载入数据的时候是否显示“载入中”
+            pageLength: 10,//首次加载的数据条数
+            ordering: false,//排序操作在服务端进行，所以可以关了。
+            bFilter: false,
+            dom:'t<"bottom"ilp><"clear">',
+            ajax: {//类似jquery的ajax参数，基本都可以用。
+                type: "post",//后台指定了方式，默认get，外加datatable默认构造的参数很长，有可能超过get的最大长度。
+                url: "/station/v_list",
+                dataSrc: "data",//默认data，也可以写其他的，格式化table的时候取里面的数据
+                data: function (d) {//d 是原始的发送给服务器的数据，默认很长。
+                    var param = {};//因为服务端排序，可以新建一个参数对象
+                    param.start = d.start;//开始的序号
+                    param.length = d.length;//要取的数据的
+                    var formData = $("#query_form").serializeArray();//把form里面的数据序列化成数组 filter_form
+                    formData.forEach(function (e) {
+                        param[e.name] = e.value;
+                    });
+                    return param;//自定义需要传递的参数。
+                },dataFilter: function (json) {//json是服务器端返回的数据
+                //如果服务端返回的json字符串符合datatable要求，则直接return json，若不符合则进行以下步骤
+                //获取到的是json字符串,转换成json对象，提取所需要的数据
+                var dt = $.parseJSON(json);
+                //然后定义一个符合datatable要求的对象，data属性的值是实际返回的数据
+                var returndt = {
+                  //"draw": ,
+                  "recordsTotal": dt.recordsTotal,
+                  "recordsFiltered": dt.recordsTotal,
+                  "data":dt.data
+                };
+                //把符合要求的对象再次转为json字符串return出去
+                return JSON.stringify(returndt);
+              }
+            },
+            columns: [//对应上面thead里面的序列
+              { data: function (e) {
+                  return e.id;
+              }
+              }
+              ,
+              { data: function (e) {
+                  return e.stationName;
+                }
+              },
+              {
+                data: function (e) {
+                  if(e.stationType){
+                    if(e.stationType == 1){
+                      return "乡镇级服务站点";
+                    }
+                  }
+                  return "村级服务站点";
+                }
+              },
+              { data: function (e) {
+                  return e.stationCode;
+                }
+              },
+              {
+                  data: function (e) {
+                      if (e.createTime) {
+                          return new Date(e.createTime).format("yyyy-MM-dd hh:mm:ss");
+                      }
+                      return "";
+                  }
+              }
+              ,
+              {
+                data: function (e,row) {
+                  var html = "<a id='"+e.id+"' href='/station/v_edit?id="+e.id+"'  class='btn btn-default btn-success show-detail link-button btn-sm'><i class='fa fa-eye'></i> 查看</a>"
+                  html += "<a id='"+e.id+"' href='/station/v_edit?id="+e.id+"' class='btn btn-default btn-warning show-edit link-button btn-sm'><i class='fa fa-edit'></i> 编辑</a>"
+                  html += "<a id='"+e.id+"' href='#'  class='btn btn-default btn-danger ajax-link link-button delete-button btn-sm'><i class='fa fa-times'></i> 删除</a>"
+                  return html;
+                },
+                "width": "35%"
+              }
+            ],
+            initComplete: function (setting, json) {
+                initLink();
+                initAfterData();
+            },
+            language: {
+                lengthMenu: "每页显示_MENU_ 条",
+                processing: "正在加载数据...",//处理页面数据的时候的显示
+                search: '<span class="label label-success">搜索：</span>',
+                paginate: {//分页的样式文本内容。
+                    previous: "上一页",
+                    next: "下一页",
+                    first: "第一页",
+                    last: "最后一页"
+                },
+                zeroRecords: "没有找到符合条件的数据",//table tbody内容为空时，tbody的内容。
+                //下面三者构成了总体的左下角的内容。
+                info: "共_PAGES_ 页，当前第 _START_ - _END_ 条　共计 _TOTAL_ 条",//左下角的信息显示，大写的词为关键字。
+                infoEmpty: "0条记录",//筛选为空时左下角的显示。
+                infoFiltered: "(从 _MAX_ 条记录过滤)"//筛选之后的左下角筛选提示(另一个是分页信息显示，在上面的info中已经设置，所以可以不显示)，
+            }
+        });
+        $('.form_time').datetimepicker().on('changeDate', function(ev) {
+        }).on('hide', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+        });
+        /*日期控件初始化*/
+        $('.form_time').datetimepicker({
+            language: 'zh-CN',
+            weekStart: 1,
+            todayBtn: 1,
+            autoclose: 1,
+            todayHighlight: 1,
+            startView: 2,
+            minView: 0,
+            forceParse: 0
+        });
+
+
+        $("#add_station").on('click',function (e) {
+
+            $("#station_form input[type='text']").val("");
+            $("#station_modal").modal('show');
+        })
+
+        /**
+         * 清空模态框
+         */
+        $("#station_modal").on('hide.bs.modal', function (e) {
+            $("#station_form #stationName").val("");
+            $("#station_form #stationCode").val("");
+        })
+
+        $("#station_form .submit").on('click',function (e) {
+
+
+          var pass = $("#password").val();
+          var pre_password = $("#pre_password").val();
+          console.log("pass:");
+          console.log(pass);
+          console.log(pre_password);
+          if(pre_password !="" && pass != pre_password){
+            $("#updatePass").val(1);
+          }
+          $("#updatePass").val()
+
+          var result = LoadFormAjaxData($("#station_form"));
+          if(result.code == 1){
+              bootAlert(result.msg)
+          }
+          $('#data_table').DataTable().draw();
+        })
+    })
+
+    initAfterData = function(e){
+        $('.link-button').on('click', function (e) {
+            if ($(this).hasClass('show-edit')) {
+                e.preventDefault();
+                var url = $(this).attr('href');
+                var result = LoadAjaxData(url);
+                if(result == undefined){
+                    bootAlert("系统出现问题,请联系开发人员.");
+                    return;
+                }
+                var data = result.data;
+                console.log(data);
+
+                $('#station_modal #station_id').val(data.id);
+                $('#station_modal #stationName').val(data.stationName);
+                $('#station_modal #stationCode').val(data.stationCode);
+                $('#station_modal #stationType').val(data.stationType);
+
+                $('#station_modal #user_id').val(data.userInfo.id);
+                $('#station_modal #realName').val(data.userInfo.realName);
+                $('#station_modal #contactNumber').val(data.userInfo.contactNumber);
+                $('#station_modal #username').val(data.userInfo.username);
+                $('#station_modal #password').val(data.userInfo.password);
+                $('#station_modal #pre_password').val(data.userInfo.password);
+                $('#station_modal').modal('show');
+            }
+
+          if ($(this).hasClass('show-detail')) {
+            e.preventDefault();
+            var url = $(this).attr('href');
+            var result = LoadAjaxData(url);
+            if(result == undefined){
+              bootAlert("系统出现问题,请联系开发人员.");
+              return;
+            }
+            var data = result.data;
+            $('#detail_modal #stationName').val(data.stationName);
+            $('#detail_modal #stationCode').val(data.stationCode);
+            $('#detail_modal #stationType').val(data.stationType);
+
+            $('#detail_modal #realName').val(data.userInfo.realName);
+            $('#detail_modal #contactNumber').val(data.userInfo.contactNumber);
+            $('#detail_modal #username').val(data.userInfo.username);
+
+
+            $('#detail_modal .modal-dialog').css("background-color","#eee")
+            $('#detail_modal').modal('show');
+          }
+        })
+    }
+
+
+
+</script>
+</body>
+</html>

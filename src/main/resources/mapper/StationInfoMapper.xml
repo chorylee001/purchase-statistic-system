@@ -9,6 +9,27 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
+
+  <resultMap id="UserStationMap" type="com.infowoo.purchase.entity.StationInfo">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="station_name" jdbcType="VARCHAR" property="stationName" />
+    <result column="station_code" jdbcType="VARCHAR" property="stationCode" />
+    <result column="station_type" jdbcType="INTEGER" property="stationType" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+
+    <association property="userInfo" javaType="com.infowoo.purchase.entity.UserInfo">
+      <result column="user_id" jdbcType="BIGINT" property="id" />
+      <result column="username" jdbcType="VARCHAR" property="username" />
+      <result column="real_name" jdbcType="VARCHAR" property="realName" />
+      <result column="password" jdbcType="VARCHAR" property="password" />
+      <result column="contact_number" jdbcType="VARCHAR" property="contactNumber" />
+      <result column="station_id" jdbcType="BIGINT" property="stationId" />
+      <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    </association>
+  </resultMap>
+
+
   <insert id="insert" parameterType="com.infowoo.purchase.entity.StationInfo" useGeneratedKeys="true" keyProperty="id">
     insert into purchase_station_info (station_name, station_code,station_type,
       create_time,update_time
@@ -17,56 +38,19 @@
       #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.infowoo.purchase.entity.StationInfo">
-    insert into company_info
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="companyName != null">
-        company_name,
-      </if>
-      <if test="expiredTime != null">
-        expired_time,
-      </if>
-      <if test="createdAt != null">
-        create_time,
-      </if>
-      <if test="updatedAt != null">
-        update_time,
-      </if>
-      <if test="companyDesc != null">
-        company_desc,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
-      <if test="companyName != null">
-        #{companyName,jdbcType=VARCHAR},
-      </if>
-      <if test="expiredTime != null">
-        #{expiredTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createdAt != null">
-        #{createdAt,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updatedAt != null">
-        #{updatedAt,jdbcType=TIMESTAMP},
-      </if>
-      <if test="companyDesc != null">
-        #{companyDesc,jdbcType=LONGVARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <select id="findCompanyById" parameterType="java.util.Map" resultMap="BaseResultMap">
-    SELECT  * from company_info WHERE id=#{companyId}
+
+  <update id="update" parameterType="com.infowoo.purchase.entity.StationInfo" useGeneratedKeys="true" keyProperty="id">
+    update purchase_station_info station set station_name=#{stationName},station_code=#{stationCode},station_type=#{stationType}
+    where station.id=#{id}
+  </update>
+  <select id="findStationById" parameterType="java.util.Map" resultMap="UserStationMap">
+    SELECT  station.*,ui.id user_id,ui.username,ui.real_name,ui.password,ui.contact_number,ui.create_time from purchase_station_info station
+     left join user_info ui on station.id=ui.station_id WHERE station.id=#{stationId}
   </select>
 
   <select id="getAll" parameterType="java.lang.Integer" resultMap="BaseResultMap">
 
-    select * from company_info
+    select * from purchase_station_info
     where 1=1
     <if test="status != null">
       and status=#{status}

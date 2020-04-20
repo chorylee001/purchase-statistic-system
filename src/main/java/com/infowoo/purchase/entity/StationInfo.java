@@ -23,4 +23,6 @@ public class StationInfo {
     private Integer stationType;
     private Date createTime;
     private Date updateTime;
+
+    private UserInfo userInfo;
 }
