@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:shiro="http://www.pollix.at/thymeleaf/shiro"
+      lang="en">
+<head th:include="header::head('站点交易信息采集系统 | 后台')"></head>
+<body class="hold-transition skin-blue sidebar-mini">
+  <div class="wrapper">
+    <header class="main-header">
+      <!-- Logo -->
+      <a href="/" class="logo">
+        <!-- mini logo for sidebar mini 50x50 pixels -->
+        <span class="logo-mini"><b>R</b>obot</span>
+        <!-- logo for regular state and mobile devices -->
+        <span class="logo-lg"><b>站点交易信息采集系统</b></span>
+      </a>
+      <!-- Header Navbar: style can be found in header.less -->
+      <nav class="navbar navbar-static-top">
+        <!-- Sidebar toggle button-->
+        <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+        </a>
+        <div class="navbar-custom-menu">
+          <ul class="nav navbar-nav">
+            <li><a><shiro:principal /> </a></li>
+            <li><a href="/logout">退出</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+    <!-- =============================================== -->
+    <div th:replace="menu :: menu"></div>
+    <!-- =============================================== -->
+    <!-- Main Container -->
+    <div class="content-wrapper" id="main_container">
+
+    </div>
+    <!-- /.content-wrapper -->
+    <div th:include="footer::footer"></div>
+
+    <!-- /.control-sidebar -->
+    <!-- Add the sidebar's background. This div must be placed
+         immediately after the control sidebar -->
+    <div class="control-sidebar-bg"></div>
+  </div>
+  <!-- ./wrapper -->
+  <div th:include="script::loadJs"></div>
+</body>
+</html>

@@ -3,9 +3,16 @@
 <body class="hold-transition skin-blue sidebar-mini">
 <section class="content-header">
   <h1>
-    数据列表
-    <small>数据上报</small>
+    话术管理
+    <small>话术配置</small>
   </h1>
+  <!--<ol class="breadcrumb">
+    <li><a href="#"><i class="fa fa-dashboard"></i> 首页</a></li>
+    <li class="active">话术管理</li>
+  </ol>-->
+  <!--<h1>
+    hello <span th:text="${username}"></span>.
+  </h1>-->
 </section>
 <!-- Main content -->
 <section class="content">
@@ -14,12 +21,30 @@
       <div class="box-body">
         <div class="row">
           <div class="form-group col-sm-4">
-            <label class="col-sm-3 control-label">上报日期:</label>
+            <label class="col-sm-3 control-label">话术名称:</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="" placeholder="" th:text="${recordName}" name="recordName">
+            </div>
+          </div>
+          <div class="form-group col-sm-4">
+            <label for="" class="col-sm-3 control-label">所属企业:</label>
+            <div class="col-sm-9">
+              <input type="hidden" name="companyId">
+              <select class="form-control select-control" style="width: 100%;" id="sel_company">
+                <option selected="selected" value="0" name="company">全部</option>
+                <div th:each="company : ${companys}">
+                  <option th:selected="${company.id eq companyId}" th:text="${company.companyName}" th:value="${company.id}"  name="company"></option>
+                </div>
+              </select>
+            </div>
+          </div>
+          <div class="form-group col-sm-4">
+            <label class="col-sm-3 control-label">添加日期:</label>
             <div class="col-sm-9 input-group date">
               <div class="input-group-addon">
                 <i class="fa fa-calendar"></i>
               </div>
-              <input type="text" class="form-control pull-right" id="reservation" name="reportTime">
+              <input type="text" class="form-control pull-right" id="reservation" name="executeTime">
             </div>
           </div>
         </div>
@@ -33,7 +58,7 @@
         </div>
         <div class="col-sm-1">
           <!--<button type="submit" class="btn btn-success add"></button>-->
-          <a href="/report/v_add" class="btn btn-success add ajax-link inner-link">数据上报</a>
+          <a href="/record/v_add" class="btn btn-success add ajax-link inner-link">添&nbsp;&nbsp;&nbsp;&nbsp;加</a>
         </div>
       </div>
     </form>
@@ -45,14 +70,23 @@
           <table id="data_table" class="table table-bordered table-hover">
             <thead>
             <tr>
-              <th>站点ID</th>
-              <th>上报日期</th>
-              <th>站点名称</th>
-              <th>站点类型</th>
+              <th>序号</th>
+              <th>话术名称</th>
+              <th>所属企业</th>
+              <th>需要合成</th>
+              <th>创建时间</th>
               <th>操作</th>
             </tr>
             </thead>
             <tbody class="data-table">
+            <!--<tr th:each="station : ${companys}">-->
+            <!--<td th:text="${station.id}">id</td>-->
+            <!--<td th:text="${station.companyName}">id</td>-->
+            <!--<td th:text="${station.companyDesc}">id</td>-->
+            <!--<td th:text="${station.expiredTime} ? ${#dates.format(station.expiredTime, 'yyyy-mm-dd HH:mm')}">id</td>-->
+            <!--<td th:text="${station.createdAt} ? ${#dates.format(station.createdAt, 'yyyy-mm-dd HH:mm')}">id</td>-->
+            <!--<td th:text="${station.updatedAt} ? ${#dates.format(station.updatedAt, 'yyyy-mm-dd HH:mm')}">id</td>-->
+            <!--</tr>-->
             </tbody>
           </table>
 
@@ -62,31 +96,31 @@
                 <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span></button>
-                  <h4 class="modal-title">上报详情</h4>
+                  <h4 class="modal-title">话术详情</h4>
                 </div>
                 <div class="modal-body">
 
                   <div class="box-body">
                     <table class="table table-bordered">
                       <tr>
-                        <td>站点ID</td>
-                        <td><label id="station_id"></label></td>
+                        <td>话术名称</td>
+                        <td><label id="name"></label></td>
                       </tr>
                       <tr>
-                        <td>上报日期</td>
-                        <td><label id="report_time"></label></td>
+                        <td>话术ID</td>
+                        <td><label id="documentId"></label></td>
                       </tr>
                       <tr>
-                        <td>填报人</td>
-                        <td><label id="user_real_name"></label></td>
+                        <td>模板ID</td>
+                        <td><label id="templateId"></label></td>
                       </tr>
                       <tr>
-                        <td>站点名称</td>
-                        <td><label id="station_name"></label></td>
+                        <td>所属企业</td>
+                        <td><label id="company"></label></td>
                       </tr>
                       <tr>
-                        <td>站点类型</td>
-                        <td><label id="station_type"></label></td>
+                        <td>是否使用合成</td>
+                        <td><label id="compose"></label></td>
                       </tr>
                     </table>
                   </div>
@@ -118,7 +152,7 @@
       dom:'t<"bottom"ilp><"clear">',
       ajax: {//类似jquery的ajax参数，基本都可以用。
         type: "post",//后台指定了方式，默认get，外加datatable默认构造的参数很长，有可能超过get的最大长度。
-        url: "/report/v_list",
+        url: "/record/v_list",
         dataType : 'json',
         dataSrc: "data",//默认data，也可以写其他的，格式化table的时候取里面的数据
         data: function (d) {//d 是原始的发送给服务器的数据，默认很长。
@@ -148,32 +182,33 @@
       },
       columns: [//对应上面thead里面的序列
         { data: "id" },
+        { data: "documentDesc" },
+        { data: "companyInfo.companyDesc" },
         {
           data: function (e) {
-            if (e.reportTime) {
-              return new Date(e.reportTime).format("yyyy-MM-dd");
+            if(e.useCompose){
+              if(e.useCompose == 1){
+                return "是";
+              }
+            }
+            return "否";
+          }
+        },
+        {
+          data: function (e) {
+            if (e.createdAt) {
+              return new Date(e.createdAt).format("yyyy-MM-dd hh:mm:ss");
             }
             return "";
           }
         },
-        { data: "stationName" },
-        {
-          data: function (e) {
-            if(e.stationType){
-              if(e.stationType == 1){
-                return "乡镇级服务站点";
-              }
-            }
-            return "村级服务站点";
-          }
-        }
-        ,
         {
           //record/o_delete?id="+e.id+"
           data: function (e,row) {
-            var html = "<a id='"+e.id+"' href='/report/v_detail?id="+e.id+"'  class='btn btn-default btn-success show-detail link-button btn-sm'><i class='fa fa-eye'></i> 查看</a>"
-            html += "<a id='"+e.id+"' href='/report/v_edit?id="+e.id+"' class='btn btn-default btn-warning ajax-link link-button btn-sm'><i class='fa fa-edit'></i> 编辑</a>"
+            var html = "<a id='"+e.id+"' href='/record/v_detail?id="+e.id+"'  class='btn btn-default btn-success show-detail link-button btn-sm'><i class='fa fa-eye'></i> 查看</a>"
+            html += "<a id='"+e.id+"' href='/record/v_edit?id="+e.id+"' class='btn btn-default btn-warning ajax-link link-button btn-sm'><i class='fa fa-edit'></i> 编辑</a>"
             html += "<a id='"+e.id+"' href='#'  class='btn btn-default btn-danger ajax-link link-button delete-button btn-sm'><i class='fa fa-times'></i> 删除</a>"
+            html += "<a id='"+e.id+"' href='/record/v_download?id="+e.id+"' class='btn btn-default btn-info link-button download-link btn-sm'><i class='fa fa-edit'></i> 下载</a>"
             return html;
           },
           "width": "20%"
@@ -229,6 +264,71 @@
       $('#reservation').val('');
     });
     $('#reservation').trigger('cancel.daterangepicker');
+    /*$('#data_table').DataTable({
+      'processing'  : true,
+      'serverSide'  : true,
+      'paging'      : true,
+      'lengthChange': false,
+      'ordering'    : true,
+      'info'        : true,
+      'searching'   : false,
+      'autoWidth'   : false,
+      "bStateSave":true,
+      'ajax': { url: '/record/v_list', dataSrc: 'data' },
+      "columns": [
+        { data: "id" },
+        { data: "documentDesc" },
+        { data: "companyInfo.companyDesc" },
+        { data: "useCompose"},
+        { data: "createdAt" }
+      ],
+      /!*"language": {
+        "lengthMenu": "_MENU_ 条记录每页",
+        "zeroRecords": "没有找到记录",
+        "info": "第 _PAGE_ 页 ( 总共 _PAGES_ 页 )",
+        "infoEmpty": "无记录",
+        "infoFiltered": "(从 _MAX_ 条记录过滤)",
+        "paginate": {
+          "first": "首页",
+          "previous": "上页",
+          "next": "下页",
+          "last": "末页"
+        }
+      },*!/
+      language: {
+        lengthMenu: '<select class="form-control input-xsmall">' + '<option value="1">1</option>' + '<option value="10">10</option>' + '<option value="20">20</option>' + '<option value="30">30</option>' + '<option value="40">40</option>' + '<option value="50">50</option>' + '</select>条记录',//左上角的分页大小显示。
+        search: '<span class="label label-success">搜索：</span>',
+
+        paginate: {//分页的样式内容。
+          previous: "上一页",
+          next: "下一页",
+          first: "第一页",
+          last: "最后"
+        },
+
+        zeroRecords: "没有内容",//table tbody内容为空时，tbody的内容。
+        //下面三者构成了总体的左下角的内容。
+        info: "总共_PAGES_ 页，显示第_START_ 到第 _END_ ，筛选之后得到 _TOTAL_ 条，初始_MAX_ 条 ",//左下角的信息显示，大写的词为关键字。
+        infoEmpty: "0条记录",//筛选为空时左下角的显示。
+        infoFiltered: ""//筛选之后的左下角筛选提示，
+      },
+      "columnDefs" : [
+        {
+          "targets" : 5,//操作按钮目标列
+          "data" : null,
+          "render" : function(data, type,row) {
+            var id = '"' + row.id + '"';
+            var html = "<a href='javascript:void(0);'  class='delete btn btn-default btn-xs'  ><i class='fa fa-times'></i> 查看</a>"
+            html += "<a href='javascript:void(0);' class='up btn btn-default btn-xs'><i class='fa fa-arrow-up'></i> 编辑</a>"
+            html += "<a href='javascript:void(0);'   onclick='deleteThisRowPapser("+ id + ")'  class='down btn btn-default btn-xs'><i class='fa fa-arrow-down'></i> 删除</a>"
+            return html;
+          }
+        }
+      ]
+    });*/
+    /*$(document).on("click", ".show-detail", function () {//取出当前行的数据
+      alert(JSON.stringify($("#data_table").DataTable().row($(this).parents("tr")).data()));
+    });*/
     $('.select-control').select2();
     //清空数据
     $('input[type="checkbox"].minimal, input[type="radio"].minimal').iCheck({
@@ -263,6 +363,24 @@
       }
     })
   }
+</script>
+
+
+<script>
+//  $(function () {
+//    $('#company_list').DataTable({
+//      'paging'      : true,
+//      'lengthChange': false,
+//      'searching'   : false,
+//      'ordering'    : true,
+//      'info'        : true,
+//      'autoWidth'   : false,
+//      'ajax': { url: '/station/index', dataSrc: '' },
+//    })
+//  })
+
+
+
 </script>
 </body>
 </html>

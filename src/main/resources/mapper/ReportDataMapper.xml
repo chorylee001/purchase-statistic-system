@@ -5,13 +5,14 @@
   <resultMap id="BaseResultMap" type="com.infowoo.purchase.entity.ReportData">
     <result column="id" jdbcType="BIGINT" property="id" />
     <result column="type" jdbcType="INTEGER" property="type" />
-    <result column="order_amount" jdbcType="DOUBLE" property="orderAmount" />
+    <result column="amount" jdbcType="DOUBLE" property="amount" />
     <result column="parent_category" jdbcType="INTEGER" property="parentCategory" />
     <result column="child_category" jdbcType="INTEGER" property="childCategory" />
     <result column="report_time" jdbcType="TIMESTAMP" property="reportTime" />
     <result column="report_user" jdbcType="VARCHAR" property="reportUser" />
+    <result column="created_user" jdbcType="VARCHAR" property="createdUser" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updatedTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
 
   <resultMap id="DataReportStationMap" type="com.infowoo.purchase.vo.DataReportStationVo">
@@ -75,9 +76,20 @@
       </if>
     </trim>
   </insert>
-  <select id="findCompanyById" parameterType="java.util.Map" resultMap="BaseResultMap">
-    SELECT  * from company_info WHERE id=#{companyId}
+  <select id="findById" parameterType="java.util.Map" resultMap="BaseResultMap">
+    SELECT  * from purchase_report_data WHERE id=#{id}
   </select>
+  <update id="update" parameterType="com.infowoo.purchase.entity.ReportData" useGeneratedKeys="true" keyProperty="id">
+    update purchase_report_data report set
+    `type`=#{type},
+    amount=#{amount},
+    child_category=#{childCategory},
+    report_time#{reportTime},
+    report_user=#{reportUser},
+    update_time=#{updateTime}
+    where report.id=#{id}
+
+  </update>
 
   <select id="getAll" parameterType="java.lang.Integer" resultMap="BaseResultMap">
 
