@@ -34,7 +34,7 @@ public class ReportData {
      */
     private Double amount;
 
-
+    private Integer parentCategory;
     /**
      * 小类
      */

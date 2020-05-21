@@ -68,6 +68,14 @@ public class ReportController {
         return "report/add";
     }
 
+    @RequestMapping("/v_edit")
+    public @ResponseBody
+    JsonResult edit(Long id){
+
+        ReportData reportData = reportService.findById(id);
+        return JsonResult.buildSuccessResult("success.",reportData);
+    }
+
     @RequestMapping(path = "/o_save")
     public String save(Integer buyCount, Integer sellCount, Integer[] buyChildCategorys, Double[] buyAmounts,
                     Integer[] sellChildCategorys, Double[] sellAmounts,

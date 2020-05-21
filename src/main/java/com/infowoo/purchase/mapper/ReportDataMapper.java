@@ -45,4 +45,6 @@ public interface ReportDataMapper {
      * @return
      */
     List<ReportData> getListByNameAndStatus(String companyName, Integer status);
+
+    ReportData findById(@Param("id") Long id);
 }

@@ -25,6 +25,12 @@ public class ReportServiceImpl implements IReportService {
     }
 
     @Override
+    public ReportData findById(Long id){
+
+        return reportDataMapper.findById(id);
+    }
+
+    @Override
     public int save(ReportData reportData){
         return reportDataMapper.insert(reportData);
     }

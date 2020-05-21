@@ -10,4 +10,6 @@ public interface IReportService {
     Pagination getReportList(String startTime,String endTime,Long userId,Integer start, Integer pageSize);
 
     int save(ReportData reportData);
+
+    ReportData findById(Long id);
 }
