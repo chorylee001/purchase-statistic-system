@@ -1,0 +1,93 @@
+
+/**
+datalist style
+ */
+.data-table tr td:last-child{
+    width: 15%;
+}
+.data-table tr td a{
+    margin: 0 2px
+}
+
+/**
+basic detail style
+ */
+.input-sm{
+    margin: 0 5px;
+    padding: 2px 5px;
+}
+.warn-star{
+    color: red;
+}
+.top-button{
+    float: right;
+}
+.radio-group:last-child{
+    padding-top: 7px;
+    margin-bottom: 0;
+}
+
+.box-adjacent{
+    text-align: center;
+}
+.box.box-primary{
+    box-shadow: inherit;
+}
+.btn-adjacent{
+    margin-left: 10px;
+}
+.btn-only-box{
+    text-align: center;
+}
+
+.fileupload-group{
+    position: relative;
+    width: 100%;
+}
+.fileupload-group .file{
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    padding: 6px 12px;
+    z-index: -1;
+}
+.fileupload-group .append-button {
+    margin-right: 5px;
+    float: left;
+    width: auto !important;
+}
+.fileupload-group .path-label{
+    padding: 6px 12px;
+}
+.fileupload-group .btn-upload{
+    float: right;
+    padding: 6px 12px;
+}
+
+.process-body{
+    display: none;
+}
+
+.warn-msg{
+    text-align: center;
+}
+
+.modal-dialog .modal-body.limit-body{
+    max-height: 400px;
+    overflow-y: scroll;
+}
+
+/**
+DataTables
+ */
+.dataTables_info{
+    display: inline-block;
+}
+.dataTables_length{
+    display: inline-block;
+    margin-left: 10px;
+}
+.paging_simple_numbers{
+    float: right;
+}
