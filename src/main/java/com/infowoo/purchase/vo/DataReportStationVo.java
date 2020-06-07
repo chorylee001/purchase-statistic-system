@@ -16,6 +16,7 @@ public class DataReportStationVo {
     private Long id;
     private String stationName;
     private Integer stationType;
-    private Date reportTime;
+    private Long createdUser;
+    private String reportTime;
     private Date createTime;
 }

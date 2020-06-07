@@ -27,7 +27,7 @@
       </nav>
     </header>
     <!-- =============================================== -->
-    <div th:replace="menu :: menu"></div>
+    <div th:replace="menu::menu (user=${user})"></div>
     <!-- =============================================== -->
     <!-- Main Container -->
     <div class="content-wrapper" id="main_container">

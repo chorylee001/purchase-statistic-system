@@ -8,6 +8,7 @@
     <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="contact_number" jdbcType="VARCHAR" property="contactNumber" />
     <result column="station_id" jdbcType="BIGINT" property="stationId" />
+    <result column="role_id" jdbcType="BIGINT" property="roleId" />
     <result column="salt" jdbcType="VARCHAR" property="salt" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />

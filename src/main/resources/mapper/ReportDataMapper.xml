@@ -19,7 +19,8 @@
     <result column="id" jdbcType="BIGINT" property="id" />
     <result column="station_name" jdbcType="VARCHAR" property="stationName" />
     <result column="station_type" jdbcType="INTEGER" property="stationType" />
-    <result column="report_time" jdbcType="TIMESTAMP" property="reportTime" />
+    <result column="report_time" jdbcType="INTEGER" property="reportTime" />
+    <result column="created_user" jdbcType="INTEGER" property="createdUser" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
 
@@ -33,6 +34,12 @@
       #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
       )
   </insert>
+
+  <update id="update" parameterType="com.infowoo.purchase.entity.ReportData">
+    update purchase_report_data report set amount=#{amount},child_category=#{childCategory},
+    report_time=#{reportTime},report_user=#{reportUser}
+    where report.report_time=#{oldReportTime} and report.created_user=#{createdUser} and report.type=#{type}
+  </update>
   <insert id="insertSelective" parameterType="com.infowoo.purchase.entity.CompanyInfo">
     insert into company_info
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -79,17 +86,19 @@
   <select id="findById" parameterType="java.util.Map" resultMap="BaseResultMap">
     SELECT  * from purchase_report_data WHERE id=#{id}
   </select>
-  <update id="update" parameterType="com.infowoo.purchase.entity.ReportData" useGeneratedKeys="true" keyProperty="id">
-    update purchase_report_data report set
-    `type`=#{type},
-    amount=#{amount},
-    child_category=#{childCategory},
-    report_time#{reportTime},
-    report_user=#{reportUser},
-    update_time=#{updateTime}
-    where report.id=#{id}
-
-  </update>
+  <select id="findByReportTimeAndUser" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select * from purchase_report_data
+    where 1=1
+    <if test="type != null">
+      and `type`=#{type}
+    </if>
+    <if test="reportTime != null">
+      and report_time = #{reportTime}
+    </if>
+    <if test="createdUser != null">
+      and created_user = #{createdUser}
+    </if>
+  </select>
 
   <select id="getAll" parameterType="java.lang.Integer" resultMap="BaseResultMap">
 
@@ -110,7 +119,7 @@
 
   <select id="getList" parameterType="java.util.Map" resultMap="DataReportStationMap">
 
-    select station.id,station.station_name,station.station_type,report.report_time,min(report.create_time) create_time
+    select station.id,station.station_name,station.station_type,report.report_time,min(report.create_time) create_time,min(report.created_user) created_user
     from purchase_report_data report
     join user_info ui on report.created_user=ui.id
     join purchase_station_info station  on ui.station_id=station.id

@@ -14,6 +14,9 @@ public interface ReportDataMapper {
      */
     int insert(ReportData record);
 
+    int update(ReportData record);
+
+
     /**
      * 根据ID查询
      * @param companyId
@@ -47,4 +50,6 @@ public interface ReportDataMapper {
     List<ReportData> getListByNameAndStatus(String companyName, Integer status);
 
     ReportData findById(@Param("id") Long id);
+
+    List<ReportData> findByReportTimeAndUser(@Param("reportTime")String reportTime,@Param("createdUser")Integer createdUser,@Param("type") Integer type);
 }

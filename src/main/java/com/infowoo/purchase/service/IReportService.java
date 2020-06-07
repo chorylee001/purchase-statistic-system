@@ -3,6 +3,8 @@ package com.infowoo.purchase.service;
 import com.infowoo.purchase.entity.ReportData;
 import com.infowoo.purchase.vo.Pagination;
 
+import java.util.List;
+
 public interface IReportService {
 
 
@@ -11,5 +13,10 @@ public interface IReportService {
 
     int save(ReportData reportData);
 
+    int update(ReportData reportData);
+
     ReportData findById(Long id);
+
+    List<ReportData> findByReportTimeAndUser(String reportTime,Integer createdUser,Integer type);
+
 }

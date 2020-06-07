@@ -64,6 +64,7 @@ public class StationController extends BaseController{
                 .username(userInfo.getUsername())
                 .realName(userInfo.getRealName())
                 .contactNumber(userInfo.getContactNumber())
+                .roleId(3)
                 .status(1)
                 .build();
         if(Objects.nonNull(userId)){

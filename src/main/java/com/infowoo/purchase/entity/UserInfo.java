@@ -25,6 +25,8 @@ public class UserInfo {
 
     private Long stationId;
 
+    private Integer roleId;
+
     private String salt;
 
     /**

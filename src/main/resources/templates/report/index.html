@@ -151,7 +151,8 @@
         {
           data: function (e) {
             if (e.reportTime) {
-              return new Date(e.reportTime).format("yyyy-MM-dd");
+              return e.reportTime;
+              // return new Date(e.reportTime).format("yyyy-MM-dd");
             }
             return "";
           }
@@ -171,9 +172,9 @@
         {
           //record/o_delete?id="+e.id+"
           data: function (e,row) {
-            var html = "<a id='"+e.id+"' href='/report/v_detail?id="+e.id+"'  class='btn btn-default btn-success show-detail link-button btn-sm'><i class='fa fa-eye'></i> 查看</a>"
-            html += "<a id='"+e.id+"' href='/report/v_edit?id="+e.id+"' class='btn btn-default btn-warning ajax-link link-button btn-sm'><i class='fa fa-edit'></i> 编辑</a>"
-            html += "<a id='"+e.id+"' href='#'  class='btn btn-default btn-danger ajax-link link-button delete-button btn-sm'><i class='fa fa-times'></i> 删除</a>"
+            var html = "<a id='"+e.id+"' href='/report/v_detail?reportTime="+e.reportTime+"&createdUser="+e.createdUser+"' class='btn btn-default btn-success ajax-link link-button btn-sm'><i class='fa fa-edit'></i> 查看</a>"
+            html += "<a id='"+e.id+"' href='/report/v_edit?reportTime="+e.reportTime+"&createdUser="+e.createdUser+"' class='btn btn-default btn-warning ajax-link link-button btn-sm'><i class='fa fa-edit'></i> 编辑</a>"
+            // html += "<a id='"+e.id+"' href='#'  class='btn btn-default btn-danger ajax-link link-button delete-button btn-sm'><i class='fa fa-times'></i> 删除</a>"
             return html;
           },
           "width": "20%"

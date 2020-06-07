@@ -44,6 +44,7 @@ public class ReportData {
      * 上报日期
      */
     private String reportTime;
+    private String oldReportTime;
 
     /**
      * 上报用户

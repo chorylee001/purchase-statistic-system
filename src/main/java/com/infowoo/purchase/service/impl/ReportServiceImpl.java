@@ -7,6 +7,8 @@ import com.infowoo.purchase.vo.Pagination;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class ReportServiceImpl implements IReportService {
 
@@ -31,7 +33,18 @@ public class ReportServiceImpl implements IReportService {
     }
 
     @Override
+    public List<ReportData> findByReportTimeAndUser(String reportTime,Integer createdUser,Integer type){
+
+        return reportDataMapper.findByReportTimeAndUser(reportTime,createdUser,type);
+    }
+
+    @Override
     public int save(ReportData reportData){
         return reportDataMapper.insert(reportData);
+    }
+
+    @Override
+    public int update(ReportData reportData){
+        return reportDataMapper.update(reportData);
     }
 }

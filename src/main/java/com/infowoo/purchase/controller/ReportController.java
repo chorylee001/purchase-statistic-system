@@ -13,7 +13,6 @@ import com.infowoo.purchase.config.SyncServiceStationPortTypeProxy;
 import com.infowoo.purchase.entity.ReportData;
 import com.infowoo.purchase.entity.UserInfo;
 import com.infowoo.purchase.entity.VoiceRecordIntent;
-import com.infowoo.purchase.model.JsonResult;
 import com.infowoo.purchase.service.IReportService;
 import com.infowoo.purchase.utils.DateUtil;
 import com.infowoo.purchase.utils.UserUtil;
@@ -68,16 +67,30 @@ public class ReportController {
         return "report/add";
     }
 
-    @RequestMapping("/v_edit")
-    public @ResponseBody
-    JsonResult edit(Long id){
+    @RequestMapping("/v_detail")
+    public String detail(String reportTime,Integer createdUser,Model model){
 
-        ReportData reportData = reportService.findById(id);
-        return JsonResult.buildSuccessResult("success.",reportData);
+        model.addAttribute("reportBuyDatas", reportService.findByReportTimeAndUser(reportTime, createdUser,BusinessType.TYPE_BUY.getType()));
+        model.addAttribute("reportSellDatas", reportService.findByReportTimeAndUser(reportTime, createdUser,BusinessType.TYPE_SELL.getType()));
+        model.addAttribute("CategoryBuyMap",GoodsCategory.CategoryBuyMap);
+        model.addAttribute("CategorySellMap",GoodsCategory.CategorySellMap);
+        return "report/detail";
+    }
+
+    @RequestMapping("/v_edit")
+    public String edit(String reportTime,Integer createdUser,Model model){
+
+
+
+        model.addAttribute("reportBuyDatas", reportService.findByReportTimeAndUser(reportTime, createdUser,BusinessType.TYPE_BUY.getType()));
+        model.addAttribute("reportSellDatas", reportService.findByReportTimeAndUser(reportTime, createdUser,BusinessType.TYPE_SELL.getType()));
+        model.addAttribute("CategoryBuyMap",GoodsCategory.CategoryBuyMap);
+        model.addAttribute("CategorySellMap",GoodsCategory.CategorySellMap);
+        return "report/edit";
     }
 
     @RequestMapping(path = "/o_save")
-    public String save(Integer buyCount, Integer sellCount, Integer[] buyChildCategorys, Double[] buyAmounts,
+    public String save(Integer createdUser,String oldReportTime,Integer buyCount, Integer sellCount, Integer[] buyChildCategorys, Double[] buyAmounts,
                     Integer[] sellChildCategorys, Double[] sellAmounts,
                     String reportTime, String reportUser, HttpServletRequest request) throws JsonProcessingException {
 
@@ -104,16 +117,27 @@ public class ReportController {
                 amount = buyAmounts[i];
 
                 reportData = ReportData.builder()
-                        .type(1)
+                        .type(BusinessType.TYPE_BUY.getType())
                         .childCategory(cate)
                         .amount(amount)
                         .reportUser(reportUser)
                         .reportTime(reportTime)
-                        .createdUser(userInfo.getId())
-                        .createTime(new Date())
-                        .updateTime(new Date())
                         .build();
-                reportService.save(reportData);
+                if(Objects.isNull(createdUser)){
+                    reportData.setCreatedUser(userInfo.getId());
+                    reportData.setCreateTime(new Date());
+                    reportData.setUpdateTime(new Date());
+                    reportService.save(reportData);
+                }else{
+                    reportData.setCreatedUser(createdUser.longValue());
+                    reportData.setUpdateTime(new Date());
+                    if(oldReportTime.indexOf(",")!=-1){
+                        oldReportTime = oldReportTime.split(",")[0];
+                    }
+                    reportData.setOldReportTime(oldReportTime);
+                    reportService.update(reportData);
+
+                }
 
                 commodityXML = ReportDataCommodityXML
                         .builder()
@@ -133,16 +157,29 @@ public class ReportController {
                 amount = sellAmounts[i];
 
                 reportData = ReportData.builder()
-                        .type(2)
+                        .type(BusinessType.TYPE_SELL.getType())
                         .childCategory(cate)
                         .amount(amount)
                         .reportUser(reportUser)
                         .reportTime(reportTime)
-                        .createdUser(userInfo.getId())
-                        .createTime(new Date())
-                        .updateTime(new Date())
                         .build();
-                reportService.save(reportData);
+
+                if(Objects.isNull(createdUser)){
+                    reportData.setCreatedUser(userInfo.getId());
+                    reportData.setCreateTime(new Date());
+                    reportData.setUpdateTime(new Date());
+                    reportService.save(reportData);
+                }else{
+                    reportData.setCreatedUser(createdUser.longValue());
+                    reportData.setUpdateTime(new Date());
+
+                    if(oldReportTime.indexOf(",")!=-1){
+                        oldReportTime = oldReportTime.split(",")[0];
+                    }
+                    reportData.setOldReportTime(oldReportTime);
+                    reportService.update(reportData);
+
+                }
 
                 commodityXML = ReportDataCommodityXML
                         .builder()
