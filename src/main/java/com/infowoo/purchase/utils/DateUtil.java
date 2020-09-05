@@ -44,7 +44,15 @@ public class DateUtil {
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH)+1;
         int day = calendar.get(Calendar.DAY_OF_MONTH);
-        return year+"-"+appendZero(month)+"-"+day;
+        return year+"-"+appendZero(month)+"-"+appendZero(day);
+    }
+
+    public static String getTodayYM(){
+
+        Calendar calendar = Calendar.getInstance();
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH)+1;
+        return year+"-"+appendZero(month);
     }
 
     public static String getTodayYMD(String date){

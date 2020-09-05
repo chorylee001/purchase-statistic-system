@@ -17,18 +17,6 @@
           <i class="fa fa-th"></i> <span>填报列表</span>
         </a>
       </li>-->
-      <li class="treeview" th:if="${user.roleId eq 1||user.roleId eq 2}">
-          <a href="#">
-              <i class="fa fa-dashboard"></i> <span>系统管理</span>
-              <span class="pull-right-container">
-          <i class="fa fa-angle-left pull-right"></i>
-        </span>
-          </a>
-          <ul class="treeview-menu">
-              <!--          <li><a href="/permission/index" class="ajax-link"><i class="fa fa-circle-o"></i>权限管理</a></li>-->
-              <li><a class="ajax-link" href="/station/index"><i class="fa fa-circle-o"></i>站点管理</a></li>
-          </ul>
-      </li>
       <li class="treeview" th:if="${user.roleId eq 1}">
           <a href="#">
               <i class="fa fa-database"></i> <span>数据统计</span>
@@ -37,10 +25,22 @@
         </span>
           </a>
           <ul class="treeview-menu">
-              <li><a class="ajax-link" href="/company/user_index"><i class="fa fa-circle-o"></i>日报汇总</a></li>
-              <li><a class="ajax-link" href="/company/user_index"><i class="fa fa-circle-o"></i>月报汇总</a></li>
+              <li><a class="ajax-link" href="/statistic/index?type=day"><i class="fa fa-circle-o"></i>日报汇总</a></li>
+              <li><a class="ajax-link" href="/statistic/index?type=month"><i class="fa fa-circle-o"></i>月报汇总</a></li>
           </ul>
       </li>
+        <li class="treeview" th:if="${user.roleId eq 1||user.roleId eq 2}">
+            <a href="#">
+                <i class="fa fa-dashboard"></i> <span>系统管理</span>
+                <span class="pull-right-container">
+          <i class="fa fa-angle-left pull-right"></i>
+        </span>
+            </a>
+            <ul class="treeview-menu">
+                <!--          <li><a href="/permission/index" class="ajax-link"><i class="fa fa-circle-o"></i>权限管理</a></li>-->
+                <li><a class="ajax-link" href="/station/index"><i class="fa fa-circle-o"></i>站点管理</a></li>
+            </ul>
+        </li>
       <li class="header">LABELS</li>
     </ul>
   </section>

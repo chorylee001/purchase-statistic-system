@@ -1,23 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.infowoo.purchase.mapper.StatisticMapper">
-  <resultMap id="BaseResultMap" type="com.infowoo.purchase.entity.StationInfo">
-    <result column="id" jdbcType="BIGINT" property="id" />
-    <result column="station_name" jdbcType="VARCHAR" property="stationName" />
-    <result column="station_code" jdbcType="VARCHAR" property="stationCode" />
-    <result column="station_type" jdbcType="INTEGER" property="stationType" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  <resultMap id="BaseResultMap" type="com.infowoo.purchase.entity.StatisticData">
+    <result column="child_category" jdbcType="INTEGER" property="childCategory" />
+    <result column="total_count" jdbcType="INTEGER" property="totalCount" />
+    <result column="total_amount" jdbcType="DOUBLE" property="totalAmount" />
   </resultMap>
 
+  <select id="getDayStatistic" parameterType="java.util.Map" resultMap="BaseResultMap">
+
+    select child_category,count(id) total_count,sum(amount) total_amount from purchase_report_data report
+    where 1=1
+    <if test="type != null">
+      and type=#{type}
+    </if>
+
+    <if test="reportTime != null">
+      and report_time = #{reportTime}
+    </if>
+    group by child_category
+    order by child_category,total_amount desc
+  </select>
 
   <select id="getMonthStatistic" parameterType="java.util.Map" resultMap="BaseResultMap">
 
     select child_category,count(id) total_count,sum(amount) total_amount from purchase_report_data report
     where 1=1
-    and type=#{type}
+    <if test="type != null">
+      and type=#{type}
+    </if>
+    <if test="reportTime != null">
+      and  DATE_FORMAT(report_time,'%Y-%m') = #{reportTime}
+    </if>
     group by child_category
-    order by total_amount desc
+    order by child_category,total_amount desc
   </select>
 
 </mapper>

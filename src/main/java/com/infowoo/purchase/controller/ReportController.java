@@ -219,12 +219,11 @@ public class ReportController {
         //设置转换模式 
         xmlMapper.enable(MapperFeature.USE_STD_BEAN_NAMING);
         String result = xmlMapper.writeValueAsString(stationReportXML);
-        System.out.println("序列化结果：" + result);
 
         /*try {
             dataSend(result);
         } catch (RemoteException e) {
-            e.printStackTrace();
+            log.info("向商务部站点发送数据异常.",e.getMessage());
         }*/
         return index();
     }
@@ -237,7 +236,7 @@ public class ReportController {
         SyncServiceStationOperationResponse response = portType
                 .syncServiceStationOperation(new SyncServiceStationOperationRequest(in));
 
-        System.out.println(response.getOut());
+        log.info("syncServiceStation response:",response.getOut());
         return response.getOut();
     }
 
