@@ -220,11 +220,11 @@ public class ReportController {
         xmlMapper.enable(MapperFeature.USE_STD_BEAN_NAMING);
         String result = xmlMapper.writeValueAsString(stationReportXML);
 
-        /*try {
+        try {
             dataSend(result);
         } catch (RemoteException e) {
             log.info("向商务部站点发送数据异常.",e.getMessage());
-        }*/
+        }
         return index();
     }
 
